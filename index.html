@@ -1,0 +1,1335 @@
+cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Life OS">
+<meta name="theme-color" content="#FAF9F6">
+<title>Life OS</title>
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ─── ТОКЕНЫ ────────────────────────────────────────────── */
+:root {
+  --cream:       #FAF9F6;
+  --cream2:      #F3F1EC;
+  --cream3:      #EAE7E0;
+  --white:       #FFFFFF;
+  --border:      #E8E5DE;
+  --border2:     #D8D4CB;
+
+  --ink:         #1C1A17;
+  --ink2:        #6B6760;
+  --ink3:        #A8A49D;
+
+  /* акценты — каждый для своей категории */
+  --sage:        #7A9B8A;      /* здоровье */
+  --sage-soft:   #EEF4F0;
+  --blush:       #C4918A;      /* цикл / состояние */
+  --blush-soft:  #F7EFEE;
+  --slate:       #7A92A8;      /* тренировки */
+  --slate-soft:  #EEF2F7;
+  --lavender:    #9A8AB4;      /* Марго / аналитика */
+  --lavender-soft: #F3F0F8;
+  --sand:        #B8A882;      /* задачи */
+  --sand-soft:   #F7F4EE;
+
+  --radius:      16px;
+  --radius-sm:   10px;
+  --tab-h:       56px;
+  --font:        'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+/* ─── RESET ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100dvh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── AUTH ───────────────────────────────────────────────── */
+#auth {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px; padding: 48px 32px;
+  background: var(--cream);
+  z-index: 200;
+}
+#auth.gone { display: none; }
+
+.auth-wordmark {
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink3); margin-bottom: 8px;
+}
+
+.auth-title {
+  font-size: 32px; font-weight: 300;
+  letter-spacing: -0.5px; color: var(--ink);
+  text-align: center; line-height: 1.2;
+}
+
+.auth-body {
+  font-size: 14px; color: var(--ink2);
+  text-align: center; max-width: 240px;
+  line-height: 1.6;
+}
+
+.auth-divider { width: 32px; height: 1px; background: var(--border2); margin: 4px 0; }
+
+.field {
+  width: 100%; max-width: 280px;
+  padding: 14px 18px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--ink); font-family: var(--font);
+  font-size: 15px; transition: border-color 0.15s;
+}
+.field:focus { outline: none; border-color: var(--ink3); }
+.field.code-field { font-size: 26px; letter-spacing: 10px; text-align: center; }
+
+.btn {
+  width: 100%; max-width: 280px;
+  padding: 14px; border-radius: var(--radius-sm);
+  font-family: var(--font); font-size: 14px; font-weight: 500;
+  cursor: pointer; border: none; transition: opacity 0.15s;
+}
+.btn:active { opacity: 0.7; }
+.btn-dark { background: var(--ink); color: var(--cream); }
+.btn-ghost { background: transparent; color: var(--ink2); border: 1px solid var(--border2); }
+
+.auth-err {
+  font-size: 13px; color: var(--blush);
+  text-align: center; display: none;
+}
+
+/* ─── SHELL ─────────────────────────────────────────────── */
+#app { display: flex; flex-direction: column; height: 100dvh; }
+#app.gone { display: none; }
+
+.scroll-area {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 16px) + 16px);
+  scroll-behavior: smooth;
+}
+
+/* ─── TAB BAR ────────────────────────────────────────────── */
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(250,249,246,0.92);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: stretch; z-index: 50;
+}
+
+.tab {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px; border: none; background: none;
+  font-family: var(--font); font-size: 10px; font-weight: 400;
+  color: var(--ink3); cursor: pointer;
+  transition: color 0.15s; padding: 0;
+}
+.tab svg { width: 22px; height: 22px; stroke-width: 1.4; }
+.tab.on { color: var(--ink); }
+
+/* ─── SCREEN ─────────────────────────────────────────────── */
+.screen { display: none; }
+.screen.on { display: block; }
+
+/* ─── PAGE HEADER ────────────────────────────────────────── */
+.page-top {
+  padding: 56px 24px 20px;
+  position: sticky; top: 0;
+  background: rgba(250,249,246,0.88);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  z-index: 10;
+}
+
+.page-label {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink3); margin-bottom: 4px;
+}
+
+.page-title {
+  font-size: 28px; font-weight: 300;
+  letter-spacing: -0.3px; color: var(--ink);
+}
+
+/* ─── CARDS FLOW ─────────────────────────────────────────── */
+.flow { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.card-top {
+  padding: 16px 18px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.card-eyebrow {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink3);
+}
+
+.card-link {
+  font-size: 12px; color: var(--ink3);
+  background: none; border: none; cursor: pointer;
+  font-family: var(--font);
+}
+
+.card-body { padding: 0 18px 16px; }
+
+/* ─── INSIGHT CARD ───────────────────────────────────────── */
+.insight-card {
+  background: var(--lavender-soft);
+  border-color: transparent;
+}
+
+.insight-icon {
+  width: 28px; height: 28px;
+  background: var(--lavender-soft);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+
+.insight-text {
+  font-size: 14px; color: var(--ink); line-height: 1.6;
+}
+
+/* ─── PHASE PILL ─────────────────────────────────────────── */
+.phase-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px 5px 8px;
+  border-radius: 100px;
+  font-size: 13px; font-weight: 400;
+}
+
+.phase-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* ─── ROW LIST ───────────────────────────────────────────── */
+.row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+.row:last-child { border-bottom: none; }
+
+.row-name { flex: 1; font-size: 14px; color: var(--ink); }
+.row-meta { font-size: 12px; color: var(--ink3); }
+.row-warn { color: var(--blush); }
+
+/* ─── TASK ROW ───────────────────────────────────────────── */
+.task-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 0; border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.task-row:last-child { border-bottom: none; }
+
+.circle {
+  width: 20px; height: 20px; flex-shrink: 0;
+  border-radius: 50%; border: 1.5px solid var(--border2);
+  background: transparent; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.task-row.done .circle {
+  background: var(--sage); border-color: var(--sage);
+}
+.task-row.done .circle::after {
+  content: ''; display: block;
+  width: 5px; height: 9px;
+  border: 1.5px solid white; border-top: none; border-left: none;
+  transform: rotate(45deg) translate(-1px,-1px);
+}
+
+.task-name { flex: 1; font-size: 14px; }
+.task-row.done .task-name { color: var(--ink3); text-decoration: line-through; }
+.task-dur { font-size: 11px; color: var(--ink3); }
+
+/* ─── METRICS GRID ───────────────────────────────────────── */
+.metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px 12px; }
+
+.metric-cell {
+  background: var(--cream2);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+
+.metric-label { font-size: 11px; color: var(--ink3); margin-bottom: 4px; }
+.metric-value { font-size: 22px; font-weight: 300; color: var(--ink); letter-spacing: -0.3px; }
+.metric-unit  { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.metric-up    { color: var(--sage); }
+.metric-down  { color: var(--blush); }
+
+/* ─── SPARKLINE ─────────────────────────────────────────── */
+.spark { display: flex; align-items: flex-end; gap: 3px; height: 28px; margin-top: 8px; }
+.spark-b {
+  flex: 1; border-radius: 2px 2px 0 0;
+  background: currentColor; opacity: 0.15;
+  min-height: 2px; transition: opacity 0.2s;
+}
+.spark-b.now { opacity: 0.7; }
+
+/* ─── SEGMENT ────────────────────────────────────────────── */
+.seg {
+  display: flex; gap: 1px;
+  background: var(--cream3);
+  border-radius: var(--radius-sm);
+  padding: 3px; margin: 0 16px 12px;
+}
+
+.seg-btn {
+  flex: 1; padding: 7px 4px; border: none;
+  border-radius: 8px; background: transparent;
+  color: var(--ink3); font-size: 13px;
+  font-family: var(--font); cursor: pointer;
+  transition: all 0.15s; white-space: nowrap;
+}
+.seg-btn.on { background: var(--white); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+/* ─── TEMPLATE CHIPS ─────────────────────────────────────── */
+.chip-row {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 0 16px 14px; scrollbar-width: none;
+}
+.chip-row::-webkit-scrollbar { display: none; }
+
+.chip {
+  flex-shrink: 0; padding: 9px 16px;
+  border-radius: 100px;
+  border: 1px solid var(--border2);
+  background: var(--white); color: var(--ink);
+  font-size: 13px; font-family: var(--font);
+  cursor: pointer; white-space: nowrap;
+  transition: all 0.15s;
+}
+.chip:active { background: var(--cream2); }
+
+/* ─── WORKOUT LOG ────────────────────────────────────────── */
+.ex-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.ex-row:last-child { border-bottom: none; }
+.ex-name { color: var(--ink); }
+.ex-sets { font-size: 12px; color: var(--ink3); }
+
+.pr-tag {
+  display: inline-block;
+  background: var(--sage-soft); color: var(--sage);
+  font-size: 10px; font-weight: 600;
+  padding: 1px 5px; border-radius: 4px; margin-left: 4px;
+}
+
+/* ─── ADD BUTTON ─────────────────────────────────────────── */
+.add-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin: 4px 16px 8px;
+  padding: 12px; border-radius: var(--radius);
+  border: 1.5px dashed var(--border2);
+  background: transparent; color: var(--ink3);
+  font-size: 13px; font-family: var(--font); cursor: pointer;
+}
+
+/* ─── MOOD CHIPS ─────────────────────────────────────────── */
+.mood-row {
+  display: flex; flex-wrap: wrap; gap: 7px; padding: 4px 0 8px;
+}
+.mood-chip {
+  padding: 6px 14px; border-radius: 100px;
+  border: 1px solid var(--border2); background: var(--cream);
+  color: var(--ink2); font-size: 13px;
+  font-family: var(--font); cursor: pointer;
+}
+.mood-chip.on { background: var(--blush); border-color: var(--blush); color: white; }
+
+/* ─── MARGO CHAT ─────────────────────────────────────────── */
+.chat-area { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+
+.bubble {
+  padding: 10px 14px; border-radius: 14px;
+  font-size: 14px; line-height: 1.5; max-width: 84%;
+}
+.bubble-me    { background: var(--ink); color: var(--cream); align-self: flex-end; border-bottom-right-radius: 4px; }
+.bubble-margo { background: var(--white); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 4px; }
+
+.chat-input-bar {
+  padding: 10px 16px;
+  display: flex; align-items: flex-end; gap: 8px;
+  border-top: 1px solid var(--border);
+  background: rgba(250,249,246,0.95);
+}
+
+.chat-field {
+  flex: 1; padding: 10px 14px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 20px; color: var(--ink);
+  font-family: var(--font); font-size: 15px;
+  resize: none; min-height: 40px; max-height: 110px;
+  line-height: 1.4;
+}
+.chat-field:focus { outline: none; border-color: var(--ink3); }
+
+.send-btn {
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: var(--ink); border: none; border-radius: 50%;
+  cursor: pointer; color: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── QUICK ACTIONS ──────────────────────────────────────── */
+.qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px 12px; }
+.qa-btn {
+  padding: 14px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--white);
+  color: var(--ink); font-family: var(--font); font-size: 13px;
+  cursor: pointer; text-align: left;
+  display: flex; align-items: center; gap: 8px;
+}
+.qa-icon { font-size: 17px; flex-shrink: 0; }
+
+/* ─── BIRTHDAY BANNER ────────────────────────────────────── */
+.bday {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px;
+  background: var(--sand-soft);
+  border-color: transparent;
+  cursor: pointer;
+}
+.bday-text .title  { font-size: 14px; font-weight: 500; }
+.bday-text .sub    { font-size: 12px; color: var(--sand); margin-top: 2px; }
+
+/* ─── MODAL ──────────────────────────────────────────────── */
+.overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(28,26,23,0.4);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  display: flex; align-items: flex-end;
+}
+.overlay.gone { display: none; }
+
+.modal {
+  width: 100%;
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+  max-height: 88dvh; overflow-y: auto;
+}
+
+.modal-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: var(--border2); margin: 0 auto 20px;
+}
+
+.modal-title { font-size: 20px; font-weight: 300; margin-bottom: 20px; letter-spacing: -0.2px; }
+
+.form-group { margin-bottom: 14px; }
+.form-lbl { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 7px; display: block; }
+.form-field {
+  width: 100%; padding: 12px 14px;
+  background: var(--cream2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--ink); font-family: var(--font); font-size: 15px;
+}
+.form-field:focus { outline: none; border-color: var(--ink3); background: var(--white); }
+select.form-field { appearance: none; -webkit-appearance: none; }
+
+.form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.form-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+
+.modal-footer { display: flex; gap: 8px; margin-top: 20px; }
+.modal-btn {
+  flex: 1; padding: 14px; border-radius: var(--radius-sm);
+  font-family: var(--font); font-size: 15px; font-weight: 500;
+  border: none; cursor: pointer;
+}
+.modal-btn-primary { background: var(--ink); color: var(--cream); }
+.modal-btn-cancel  { background: var(--cream2); color: var(--ink2); }
+
+/* ─── EMPTY STATE ────────────────────────────────────────── */
+.empty { padding: 32px 18px; color: var(--ink3); font-size: 14px; text-align: center; line-height: 1.6; }
+
+/* ─── LOADING ────────────────────────────────────────────── */
+.loading { padding: 40px 18px; text-align: center; color: var(--ink3); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<!-- ─── AUTH ──────────────────────────────────────────────── -->
+<div id="auth">
+  <div class="auth-wordmark">Life OS</div>
+  <div class="auth-title">Привет</div>
+  <div class="auth-divider"></div>
+  <div class="auth-body">Нажми кнопку — Марго пришлёт код в Telegram</div>
+
+  <button class="btn btn-ghost" id="req-btn" onclick="requestCode()">Получить код</button>
+
+  <input class="field code-field" id="code-inp" type="number"
+    placeholder="000000" maxlength="6" style="display:none"
+    oninput="if(this.value.length===6) verifyCode()">
+
+  <div class="auth-err" id="auth-err">Неверный или истёкший код</div>
+</div>
+
+<!-- ─── APP ───────────────────────────────────────────────── -->
+<div id="app" class="gone">
+
+  <div class="scroll-area" id="scroll">
+
+    <!-- HOME -->
+    <div class="screen on" id="s-home">
+      <div class="page-top">
+        <div class="page-label" id="h-label">сегодня</div>
+        <div class="page-title" id="h-title">—</div>
+      </div>
+      <div class="flow" id="home-flow"><div class="loading">Загружаю…</div></div>
+    </div>
+
+    <!-- HEALTH -->
+    <div class="screen" id="s-health">
+      <div class="page-top">
+        <div class="page-label">данные</div>
+        <div class="page-title">Здоровье</div>
+      </div>
+      <div class="seg" id="seg-health">
+        <button class="seg-btn on" onclick="hTab('metrics',this)">Показатели</button>
+        <button class="seg-btn"    onclick="hTab('mood',this)">Состояние</button>
+        <button class="seg-btn"    onclick="hTab('supps',this)">БАДы</button>
+      </div>
+      <div id="ht-metrics"></div>
+      <div id="ht-mood"    style="display:none"></div>
+      <div id="ht-supps"   style="display:none"></div>
+    </div>
+
+    <!-- WORKOUTS -->
+    <div class="screen" id="s-workouts">
+      <div class="page-top">
+        <div class="page-label">активность</div>
+        <div class="page-title">Тренировки</div>
+      </div>
+      <div id="workout-flow"><div class="loading">Загружаю…</div></div>
+    </div>
+
+    <!-- LISTS -->
+    <div class="screen" id="s-lists">
+      <div class="page-top">
+        <div class="page-label">органайзер</div>
+        <div class="page-title">Списки</div>
+      </div>
+      <div class="seg" id="seg-lists">
+        <button class="seg-btn on" onclick="lTab('tasks',this)">Задачи</button>
+        <button class="seg-btn"    onclick="lTab('shopping',this)">Купить</button>
+        <button class="seg-btn"    onclick="lTab('watch',this)">Смотреть</button>
+        <button class="seg-btn"    onclick="lTab('gifts',this)">Подарки</button>
+      </div>
+      <div id="lt-tasks"></div>
+      <div id="lt-shopping" style="display:none"></div>
+      <div id="lt-watch"    style="display:none"></div>
+      <div id="lt-gifts"    style="display:none"></div>
+    </div>
+
+    <!-- MARGO -->
+    <div class="screen" id="s-margo" style="display:flex;flex-direction:column;height:100%">
+      <div class="page-top">
+        <div class="page-label">ассистент</div>
+        <div class="page-title">Марго</div>
+      </div>
+      <div class="qa-grid" id="qa-grid"></div>
+      <div class="chat-area" id="chat-area"></div>
+      <div class="chat-input-bar">
+        <textarea class="chat-field" id="chat-inp" rows="1"
+          placeholder="Запиши, спроси, надиктуй…"
+          oninput="autoH(this)" onkeydown="chatKey(event)"></textarea>
+        <button class="send-btn" onclick="chatSend()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path d="M12 19V5M5 12l7-7 7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- TAB BAR -->
+  <nav class="tabbar">
+    <button class="tab on" id="tab-home" onclick="goTab('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      Главная
+    </button>
+    <button class="tab" id="tab-health" onclick="goTab('health')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Здоровье
+    </button>
+    <button class="tab" id="tab-workouts" onclick="goTab('workouts')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 5v14M18 5v14M3 8h3M18 8h3M3 16h3M18 16h3M6 11h12"/></svg>
+      Тренировки
+    </button>
+    <button class="tab" id="tab-lists" onclick="goTab('lists')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+      Списки
+    </button>
+    <button class="tab" id="tab-margo" onclick="goTab('margo')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      Марго
+    </button>
+  </nav>
+</div>
+
+<!-- MODAL -->
+<div class="overlay gone" id="overlay" onclick="overlayClick(event)">
+  <div class="modal" id="modal-body">
+    <div class="modal-handle"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════
+const API = 'ВСТАВЬ_URL_ДЕПЛОЯ_МАРГО';
+
+// ════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════
+let TOKEN = localStorage.getItem('los_token');
+
+function checkAuth() {
+  if (TOKEN) { showApp(); loadAll(); }
+}
+
+async function requestCode() {
+  const btn = document.getElementById('req-btn');
+  btn.textContent = 'Отправляю…'; btn.disabled = true;
+  try {
+    const r = await call({ action: 'request_code' });
+    if (r.ok) {
+      btn.textContent = 'Код отправлен ✓';
+      const inp = document.getElementById('code-inp');
+      inp.style.display = ''; inp.focus();
+    } else { btn.textContent = 'Ошибка — попробуй снова'; btn.disabled = false; }
+  } catch { btn.textContent = 'Нет соединения'; btn.disabled = false; }
+}
+
+async function verifyCode() {
+  const code = document.getElementById('code-inp').value;
+  const r    = await call({ action: 'verify_code', code });
+  if (r.ok && r.token) {
+    TOKEN = r.token;
+    localStorage.setItem('los_token', TOKEN);
+    showApp(); loadAll();
+  } else {
+    document.getElementById('auth-err').style.display = '';
+  }
+}
+
+function showApp() {
+  document.getElementById('auth').classList.add('gone');
+  document.getElementById('app').classList.remove('gone');
+}
+
+// ════════════════════════════════════════════════════════
+// API
+// ════════════════════════════════════════════════════════
+async function call(params) {
+  const url = new URL(API);
+  if (TOKEN) params.token = TOKEN;
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, String(v)));
+  const r = await fetch(url);
+  return r.json();
+}
+
+// ════════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════════
+let activeTab = 'home';
+const loaded  = new Set();
+
+function goTab(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('s-' + name).classList.add('on');
+  document.getElementById('tab-' + name).classList.add('on');
+  document.getElementById('scroll').scrollTo(0, 0);
+  activeTab = name;
+
+  if (!loaded.has(name)) {
+    loaded.add(name);
+    if (name === 'health')   loadHealth();
+    if (name === 'workouts') loadWorkouts();
+    if (name === 'lists')    loadLists();
+    if (name === 'margo')    initMargo();
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// LOAD ALL
+// ════════════════════════════════════════════════════════
+function loadAll() { loadHome(); }
+
+// ════════════════════════════════════════════════════════
+// HOME
+// ════════════════════════════════════════════════════════
+const PHASE_META = {
+  menstrual:  { label: 'Менструальная', color: '#C4918A', soft: '#F7EFEE' },
+  follicular: { label: 'Фолликулярная', color: '#7A9B8A', soft: '#EEF4F0' },
+  ovulation:  { label: 'Овуляция',      color: '#B8A882', soft: '#F7F4EE' },
+  luteal:     { label: 'Лютеиновая',    color: '#7A92A8', soft: '#EEF2F7' }
+};
+
+const PHASE_TIP = {
+  menstrual:  'Щадящий ритм. Тело работает.',
+  follicular: 'Хорошее время для новых начинаний.',
+  ovulation:  'Пик энергии — хороший момент для важного.',
+  luteal:     'Замедлись. Это нормально.'
+};
+
+async function loadHome() {
+  const d = await call({ action: 'dashboard' });
+  renderHome(d);
+}
+
+function renderHome(d) {
+  // header
+  const now = new Date();
+  document.getElementById('h-label').textContent =
+    now.toLocaleDateString('ru-RU', { weekday: 'long' });
+  document.getElementById('h-title').textContent =
+    now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+
+  let html = '';
+
+  // ── Инсайт Марго (placeholder пока нет AI-вызова на главной)
+  html += `<div class="card insight-card">
+    <div class="card-top">
+      <span class="card-eyebrow" style="color:var(--lavender)">Что заметила Марго</span>
+    </div>
+    <div class="card-body">
+      <div class="insight-text">Открой вкладку Марго чтобы получить аналитику за период или задай вопрос.</div>
+    </div>
+  </div>`;
+
+  // ── Фаза цикла
+  if (d.phaseName && d.phaseKey) {
+    const m = PHASE_META[d.phaseKey] || {};
+    const tip = PHASE_TIP[d.phaseKey] || '';
+    html += `<div class="card">
+      <div class="card-body" style="padding-top:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div class="phase-pill" style="background:${m.soft};color:${m.color}">
+            <div class="phase-dot" style="background:${m.color}"></div>
+            ${m.label}
+          </div>
+          <span style="font-size:12px;color:var(--ink3)">день ${d.cycleDay}</span>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);margin-top:10px;line-height:1.5">${tip}</div>
+      </div>
+    </div>`;
+  }
+
+  // ── День рождения
+  if (d.birthdays && d.birthdays.length) {
+    const b = d.birthdays[0];
+    const ds = b.daysUntil === 0 ? 'сегодня 🎂' : `через ${b.daysUntil} ${pDays(b.daysUntil)}`;
+    html += `<div class="card bday" onclick="goTab('lists');lTab('gifts',document.querySelector('#seg-lists .seg-btn:last-child'))">
+      <span style="font-size:24px">🎁</span>
+      <div class="bday-text">
+        <div class="title">${b.title}</div>
+        <div class="sub">${ds} · посмотреть идеи</div>
+      </div>
+    </div>`;
+  }
+
+  // ── Записать состояние
+  if (!d.healthTodayFilled) {
+    html += `<div class="card" style="border-color:var(--blush);cursor:pointer" onclick="openMoodModal()">
+      <div class="card-body" style="padding-top:14px;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:14px">Как ты сегодня?</div>
+        <span style="font-size:12px;color:var(--blush)">Записать →</span>
+      </div>
+    </div>`;
+  }
+
+  // ── События
+  if (d.events && d.events.length) {
+    html += `<div class="card">
+      <div class="card-top"><span class="card-eyebrow">Сегодня</span></div>
+      <div class="card-body" style="padding-top:0">`;
+    d.events.forEach(ev => {
+      html += `<div class="row">
+        <div class="phase-dot" style="background:var(--slate)"></div>
+        <div class="row-name">${ev.title}</div>
+        <div class="row-meta">${ev.time || 'весь день'}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ── Задачи (топ-5)
+  if (d.tasks && d.tasks.length) {
+    html += `<div class="card">
+      <div class="card-top">
+        <span class="card-eyebrow">Задачи</span>
+        <button class="card-link" onclick="goTab('lists')">Все →</button>
+      </div>
+      <div class="card-body" style="padding-top:0">`;
+    d.tasks.forEach(t => {
+      html += `<div class="task-row" onclick="completeTask(${t.id},this)">
+        <div class="circle"></div>
+        <div class="task-name">${t.title}</div>
+        ${t.duration ? `<div class="task-dur">${t.duration}</div>` : ''}
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ── БАДы
+  if (d.supps && d.supps.length) {
+    html += `<div class="card">
+      <div class="card-top"><span class="card-eyebrow">Принимаю сегодня</span></div>
+      <div class="card-body" style="padding-top:0">`;
+    d.supps.forEach(s => {
+      const warn = s.daysLeft !== null && s.daysLeft <= 7;
+      const end  = s.daysLeft === null ? '' : s.daysLeft <= 0 ? '⚠ курс завершён' : warn ? `⏰ ${s.daysLeft} дн.` : `до ${s.endDate}`;
+      html += `<div class="row">
+        <div class="row-name">${s.name}</div>
+        <div class="row-meta ${warn ? 'row-warn' : ''}">${end}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  document.getElementById('home-flow').innerHTML = html || '<div class="empty">Добавь события или задачи чтобы видеть их здесь</div>';
+}
+
+// ════════════════════════════════════════════════════════
+// HEALTH
+// ════════════════════════════════════════════════════════
+let hLoading = false;
+
+async function loadHealth() {
+  if (hLoading) return; hLoading = true;
+  const [hd, sd] = await Promise.all([call({ action: 'health' }), call({ action: 'supps' })]);
+  renderMetrics(hd);
+  renderMood(hd);
+  renderSupps(sd);
+}
+
+function hTab(name, btn) {
+  document.querySelectorAll('#seg-health .seg-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  ['metrics','mood','supps'].forEach(n => {
+    document.getElementById('ht-' + n).style.display = n === name ? '' : 'none';
+  });
+}
+
+function renderMetrics(d) {
+  if (!d.latest) {
+    document.getElementById('ht-metrics').innerHTML = '<div class="empty">Нет данных из таблицы здоровья</div>';
+    return;
+  }
+  const l = d.latest;
+  const sleep = (l.deepSleep && l.lightSleep && l.remSleep)
+    ? ((+l.deepSleep + +l.lightSleep + +l.remSleep)/60).toFixed(1) : '—';
+
+  document.getElementById('ht-metrics').innerHTML = `
+    <div class="metric-grid">
+      ${mCell('Вес', l.weight, 'кг', 'var(--blush)')}
+      ${mCell('% жира', l.fat, '%', 'var(--blush)')}
+      ${mCell('Мышцы', l.muscle, 'кг', 'var(--sage)')}
+      ${mCell('Шаги', l.steps ? Math.round(l.steps).toLocaleString('ru') : '—', '/день', 'var(--slate)')}
+      ${mCell('Сон', sleep, 'ч/ночь', 'var(--lavender)')}
+      ${mCell('Энергия', l.energy, '/ 5', 'var(--sand)')}
+    </div>
+    <button class="add-btn" onclick="openMoodModal()">+ Записать состояние</button>`;
+}
+
+function mCell(label, val, unit, color) {
+  return `<div class="metric-cell">
+    <div class="metric-label">${label}</div>
+    <div class="metric-value" style="color:${color}">${val || '—'}</div>
+    <div class="metric-unit">${unit}</div>
+  </div>`;
+}
+
+function renderMood(d) {
+  const entries = (d.mood || []).slice(-14).reverse();
+  if (!entries.length) {
+    document.getElementById('ht-mood').innerHTML = '<div class="empty">Записей о состоянии пока нет</div>';
+    return;
+  }
+  let html = '<div class="flow">';
+  entries.forEach(m => {
+    const sc = +m.score || 0;
+    const em = sc >= 8 ? '🌟' : sc >= 6 ? '🙂' : sc >= 4 ? '😐' : '💙';
+    html += `<div class="card"><div class="card-body" style="padding-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:14px">${em} ${sc}/10 ${m.tag ? '· ' + m.tag : ''}</div>
+        <div style="font-size:11px;color:var(--ink3)">${m.date}</div>
+      </div>
+      ${m.phase ? `<div style="font-size:12px;color:var(--ink3);margin-top:4px">${m.phase}, день ${m.cycleDay||'?'}</div>` : ''}
+    </div></div>`;
+  });
+  html += '</div>';
+  document.getElementById('ht-mood').innerHTML = html;
+}
+
+function renderSupps(d) {
+  const supps = d.supps || [];
+  if (!supps.length) {
+    document.getElementById('ht-supps').innerHTML = '<div class="empty">БАДов нет</div>';
+    return;
+  }
+  let html = '<div class="flow"><div class="card"><div class="card-body" style="padding-top:14px">';
+  supps.forEach(s => {
+    const warn = s.daysLeft !== null && s.daysLeft <= 7;
+    const ds   = s.daysLeft === null ? 'без срока' : s.daysLeft <= 0 ? '⚠ курс завершён' : `осталось ${s.daysLeft} дн.`;
+    html += `<div class="row">
+      <div>
+        <div class="row-name">${s.name}</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:1px">с ${s.startDate}</div>
+      </div>
+      <div class="row-meta ${warn ? 'row-warn' : ''}">${ds}</div>
+    </div>`;
+  });
+  html += '</div></div></div>';
+  document.getElementById('ht-supps').innerHTML = html;
+}
+
+// ════════════════════════════════════════════════════════
+// WORKOUTS
+// ════════════════════════════════════════════════════════
+async function loadWorkouts() {
+  const [wd, td] = await Promise.all([call({ action:'workouts' }), call({ action:'workout_templates' })]);
+  renderWorkouts(wd, td);
+}
+
+function renderWorkouts(wd, td) {
+  const templates = td.templates || [];
+  const workouts  = wd.workouts  || [];
+
+  let html = '';
+
+  // Шаблоны
+  html += `<div class="flow"><div class="card">
+    <div class="card-top"><span class="card-eyebrow">Начать тренировку</span></div>
+    <div class="chip-row">`;
+  templates.forEach(t => {
+    html += `<button class="chip" onclick="startWorkout(${encodeData(t)})">${t.name}</button>`;
+  });
+  html += `</div></div>`;
+
+  // История
+  if (workouts.length) {
+    html += `<div class="card">
+      <div class="card-top"><span class="card-eyebrow">История</span></div>
+      <div class="card-body" style="padding-top:0">`;
+    workouts.slice(0,5).forEach(w => {
+      html += `<div class="row">
+        <div class="row-name">${w.type || 'Тренировка'}</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          ${w.duration ? `<div class="row-meta">${w.duration} мин</div>` : ''}
+          <div class="row-meta">${w.date}</div>
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  } else {
+    html += `<div class="card"><div class="empty" style="text-align:left;padding:16px 18px">Выбери шаблон выше чтобы записать первую тренировку</div></div>`;
+  }
+
+  html += `</div>`;
+  document.getElementById('workout-flow').innerHTML = html;
+}
+
+function encodeData(obj) {
+  return "'" + encodeURIComponent(JSON.stringify(obj)) + "'";
+}
+
+function startWorkout(enc) {
+  const t = JSON.parse(decodeURIComponent(enc));
+  let exHtml = (t.exercises || []).map((ex, i) => `
+    <div class="form-group">
+      <label class="form-lbl">${ex.name}</label>
+      <div class="form-3col">
+        <input class="form-field" type="number" placeholder="подх." value="${ex.defaultSets}" id="s${i}" style="text-align:center">
+        <input class="form-field" type="number" placeholder="повт." value="${ex.defaultReps}" id="r${i}" style="text-align:center">
+        <input class="form-field" type="number" placeholder="кг" value="${ex.defaultWeight||''}" id="w${i}" style="text-align:center">
+      </div>
+    </div>`).join('');
+
+  openModal(`
+    <div class="modal-title">${t.name}</div>
+    ${exHtml}
+    <div class="form-group">
+      <label class="form-lbl">Длительность</label>
+      <input class="form-field" type="number" id="wdur" placeholder="60 мин">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Заметка</label>
+      <input class="form-field" type="text" id="wnote" placeholder="Как прошло?">
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveWorkout('${t.name}',${t.exercises.length})">Сохранить</button>
+    </div>`);
+}
+
+async function saveWorkout(name, cnt) {
+  const exercises = [];
+  for (let i = 0; i < cnt; i++) {
+    exercises.push({ sets: v('s'+i), reps: v('r'+i), weight: v('w'+i) });
+  }
+  await call({ action:'add_workout', type:name, duration:v('wdur'), exercises:JSON.stringify(exercises), note:v('wnote') });
+  closeModal();
+  loaded.delete('workouts');
+  loadWorkouts();
+}
+
+// ════════════════════════════════════════════════════════
+// LISTS
+// ════════════════════════════════════════════════════════
+let listsCache = {};
+
+async function loadLists() {
+  const [tasks, shop, watch, gifts] = await Promise.all([
+    call({ action:'tasks' }), call({ action:'shopping' }),
+    call({ action:'watchlist' }), call({ action:'gifts' })
+  ]);
+  listsCache = { tasks, shop, watch, gifts };
+  lRender('tasks');
+}
+
+function lTab(name, btn) {
+  document.querySelectorAll('#seg-lists .seg-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  ['tasks','shopping','watch','gifts'].forEach(n => {
+    document.getElementById('lt-' + n).style.display = n === name ? '' : 'none';
+  });
+  lRender(name);
+}
+
+function lRender(name) {
+  if (name === 'tasks')    renderTasks();
+  if (name === 'shopping') renderShopping();
+  if (name === 'watch')    renderWatch();
+  if (name === 'gifts')    renderGifts();
+}
+
+function renderTasks() {
+  const tasks = listsCache.tasks?.tasks || [];
+  let html = '<div class="flow">';
+  if (tasks.length) {
+    html += '<div class="card"><div class="card-body" style="padding-top:14px">';
+    tasks.forEach(t => {
+      html += `<div class="task-row" onclick="completeTask(${t.id},this)">
+        <div class="circle"></div>
+        <div class="task-name">${t.title}${t.deadline ? ` <span style="font-size:11px;color:var(--ink3)">до ${t.deadline}</span>` : ''}</div>
+        ${t.duration ? `<div class="task-dur">${t.duration}</div>` : ''}
+      </div>`;
+    });
+    html += '</div></div>';
+  } else {
+    html += '<div class="empty">Задач нет</div>';
+  }
+  html += '</div>';
+  html += '<button class="add-btn" onclick="openAddTask()">+ Добавить задачу</button>';
+  document.getElementById('lt-tasks').innerHTML = html;
+}
+
+function renderShopping() {
+  const items = listsCache.shop?.items || [];
+  const cats  = {};
+  items.forEach(i => { const c = i.category || 'другое'; (cats[c] = cats[c]||[]).push(i); });
+
+  let html = '<div class="flow">';
+  ['себе','домой','родителям','другое'].forEach(cat => {
+    if (!cats[cat]) return;
+    html += `<div class="card">
+      <div class="card-top"><span class="card-eyebrow">${cat}</span></div>
+      <div class="card-body" style="padding-top:0">`;
+    cats[cat].forEach(it => {
+      html += `<div class="row">
+        <div class="row-name">${it.name}</div>
+        <button onclick="shopDone('${esc(it.name)}',this)" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--ink3);cursor:pointer;font-family:var(--font)">Куплено</button>
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+  if (!Object.keys(cats).length) html += '<div class="empty">Список пуст</div>';
+  html += '</div>';
+  html += '<button class="add-btn" onclick="openAddShop()">+ Добавить</button>';
+  document.getElementById('lt-shopping').innerHTML = html;
+}
+
+function renderWatch() {
+  const items = listsCache.watch?.items || [];
+  const byT   = {};
+  items.forEach(i => { const t = i.type||'видео'; (byT[t]=byT[t]||[]).push(i); });
+
+  let html = '<div class="flow">';
+  Object.keys(byT).forEach(type => {
+    html += `<div class="card">
+      <div class="card-top"><span class="card-eyebrow">${type}</span></div>
+      <div class="card-body" style="padding-top:0">`;
+    byT[type].forEach(it => {
+      html += `<div class="row">
+        ${it.url ? `<a href="${it.url}" target="_blank" style="flex:1;color:var(--ink);text-decoration:none">${it.name}<span style="color:var(--slate);margin-left:4px">↗</span></a>` : `<div class="row-name">${it.name}</div>`}
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+  if (!Object.keys(byT).length) html += '<div class="empty">Список пуст</div>';
+  html += '</div>';
+  document.getElementById('lt-watch').innerHTML = html;
+}
+
+function renderGifts() {
+  const gifts  = listsCache.gifts?.gifts || [];
+  const byP    = {};
+  gifts.forEach(g => { (byP[g.person]=byP[g.person]||[]).push(g); });
+
+  let html = '<div class="flow">';
+  Object.keys(byP).forEach(person => {
+    html += `<div class="card">
+      <div class="card-top"><span class="card-eyebrow">${person}</span></div>
+      <div class="card-body" style="padding-top:0">`;
+    byP[person].forEach(g => {
+      const bought = g.status === 'куплен';
+      html += `<div class="row" style="${bought?'opacity:.4':''}">
+        <div class="row-name">${g.idea}${g.budget ? ` <span style="color:var(--ink3);font-size:12px">~${g.budget}</span>` : ''}${bought?' ✓':''}</div>
+        ${g.url ? `<a href="${g.url}" target="_blank" style="color:var(--slate);font-size:12px;text-decoration:none">ссылка ↗</a>` : ''}
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+  if (!Object.keys(byP).length) html += '<div class="empty">Список пуст</div>';
+  html += '</div>';
+  document.getElementById('lt-gifts').innerHTML = html;
+}
+
+// ════════════════════════════════════════════════════════
+// MARGO
+// ════════════════════════════════════════════════════════
+function initMargo() {
+  const cmds = [
+    { icon:'📅', label:'Расписание',    cmd:'расписание' },
+    { icon:'💊', label:'БАДы',          cmd:'бады' },
+    { icon:'📊', label:'Аналитика',     cmd:'аналитика здоровья' },
+    { icon:'✦',  label:'Полный анализ', cmd:'полная аналитика' },
+  ];
+  document.getElementById('qa-grid').innerHTML = cmds.map(c =>
+    `<button class="qa-btn" onclick="sendCmd('${c.cmd}')">
+      <span class="qa-icon">${c.icon}</span>${c.label}
+    </button>`
+  ).join('');
+}
+
+function sendCmd(cmd) {
+  document.getElementById('chat-inp').value = cmd;
+  chatSend();
+}
+
+function addBubble(text, isMe) {
+  const d = document.createElement('div');
+  d.className = 'bubble ' + (isMe ? 'bubble-me' : 'bubble-margo');
+  d.textContent = text;
+  document.getElementById('chat-area').appendChild(d);
+  d.scrollIntoView({ behavior:'smooth' });
+}
+
+async function chatSend() {
+  const inp  = document.getElementById('chat-inp');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = ''; autoH(inp);
+  addBubble(text, true);
+
+  const typing = document.createElement('div');
+  typing.className = 'bubble bubble-margo';
+  typing.textContent = '…';
+  document.getElementById('chat-area').appendChild(typing);
+
+  const r = await call({ action:'ask_margo', text });
+  typing.remove();
+
+  if (r.intent === 'get_schedule') {
+    addBubble('Расписание лучше смотреть через бота в Telegram — там полный доступ к Calendar.', false);
+  } else if (r.intent === 'training_advice') {
+    addBubble('Совет по тренировке зависит от фазы цикла. Открой бота в Telegram для детального ответа.', false);
+  } else if (r.intent === 'add_event') {
+    addBubble(`Запишу "${r.data?.title||text}" через Telegram-бота — там есть доступ к Google Calendar.`, false);
+  } else if (r.error) {
+    addBubble('Не смогла обработать. Попробуй через бота в Telegram.', false);
+  } else {
+    addBubble('Команда распознана. Для выполнения используй бота Марго в Telegram.', false);
+  }
+}
+
+function chatKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
+
+// ════════════════════════════════════════════════════════
+// ACTIONS
+// ════════════════════════════════════════════════════════
+async function completeTask(id, el) {
+  const row = el.closest('.task-row');
+  row.classList.add('done');
+  await call({ action:'complete_task', row: id });
+  setTimeout(() => row.remove(), 500);
+}
+
+async function shopDone(name, btn) {
+  btn.textContent = '✓'; btn.disabled = true;
+  await call({ action:'mark_shopping_done', name });
+}
+
+function openAddTask() {
+  openModal(`
+    <div class="modal-title">Новая задача</div>
+    <div class="form-group">
+      <label class="form-lbl">Что нужно сделать</label>
+      <input class="form-field" id="nt" type="text" placeholder="Купить магний">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Категория</label>
+      <select class="form-field" id="nc">
+        <option value="личное">личное</option>
+        <option value="дом">дом</option>
+        <option value="покупки">покупки</option>
+        <option value="здоровье">здоровье</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Срок</label>
+      <input class="form-field" id="nd" type="text" placeholder="до пятницы">
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveTask()">Добавить</button>
+    </div>`);
+}
+
+async function saveTask() {
+  const title = v('nt'); if (!title) return;
+  await call({ action:'add_task', title, category:v('nc'), deadline:v('nd') });
+  closeModal(); loaded.delete('lists'); if (activeTab==='lists') loadLists();
+}
+
+function openAddShop() {
+  openModal(`
+    <div class="modal-title">Добавить в покупки</div>
+    <div class="form-group">
+      <label class="form-lbl">Что купить</label>
+      <input class="form-field" id="si" type="text" placeholder="Крем для рук">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Категория</label>
+      <select class="form-field" id="sc">
+        <option value="себе">себе</option>
+        <option value="домой">домой</option>
+        <option value="родителям">родителям</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveShop()">Добавить</button>
+    </div>`);
+}
+
+async function saveShop() {
+  const name = v('si'); if (!name) return;
+  await call({ action:'add_shopping', name, category:v('sc') });
+  closeModal(); loaded.delete('lists'); if (activeTab==='lists') loadLists();
+}
+
+function openMoodModal() {
+  openModal(`
+    <div class="modal-title">Как ты сейчас?</div>
+    <div class="form-group" style="text-align:center">
+      <input class="form-field" id="ms" type="number" min="1" max="10" placeholder="7"
+        style="font-size:36px;letter-spacing:8px;text-align:center;padding:18px">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Одним словом</label>
+      <div class="mood-row">
+        ${['спокойно','устала','тревожно','энергично','грустно','радостно'].map(t =>
+          `<button class="mood-chip" onclick="pickMood(this,'${t}')">${t}</button>`
+        ).join('')}
+      </div>
+      <input class="form-field" id="mt" type="text" placeholder="или своё слово">
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Пропустить</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveMood()">Записать</button>
+    </div>`);
+}
+
+function pickMood(el, tag) {
+  document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('mt').value = tag;
+}
+
+async function saveMood() {
+  const score = v('ms'); if (!score) return;
+  await call({ action:'add_mood', score, tag:v('mt') });
+  closeModal();
+}
+
+// ════════════════════════════════════════════════════════
+// MODAL
+// ════════════════════════════════════════════════════════
+function openModal(html) {
+  document.getElementById('modal-body').innerHTML = '<div class="modal-handle"></div>' + html;
+  document.getElementById('overlay').classList.remove('gone');
+}
+function closeModal() { document.getElementById('overlay').classList.add('gone'); }
+function overlayClick(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+
+// ════════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════════
+function v(id) { return (document.getElementById(id)?.value || '').trim(); }
+function esc(s) { return s.replace(/'/g,"&#39;"); }
+function pDays(n) { return n===1?'день':n>=2&&n<=4?'дня':'дней'; }
+function autoH(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,110)+'px'; }
+
+// ════════════════════════════════════════════════════════
+// START
+// ════════════════════════════════════════════════════════
+checkAuth();
+</script>
+</body>
+</html>
+HTMLEOF
+Output
