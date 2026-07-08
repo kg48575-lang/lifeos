@@ -734,6 +734,10 @@ const PHASE_TIP = {
 async function loadHome() {
   const d = await call({ action: 'dashboard' });
   renderHome(d);
+  call({ action: 'home_insight' }).then(r => {
+    const el = document.getElementById('home-insight-text');
+    if (el) el.textContent = r.insight || 'Пока нет данных для наблюдений — заполни данные здоровья.';
+  });
 }
 
 function renderHome(d) {
@@ -747,14 +751,15 @@ function renderHome(d) {
   let html = '';
 
   // ── Инсайт Марго (placeholder пока нет AI-вызова на главной)
-  html += `<div class="card insight-card">
+ html += `<div class="card insight-card">
     <div class="card-top">
       <span class="card-eyebrow" style="color:var(--lavender)">Что заметила Марго</span>
     </div>
     <div class="card-body">
-      <div class="insight-text">Открой вкладку Марго чтобы получить аналитику за период или задай вопрос.</div>
+      <div class="insight-text" id="home-insight-text">…</div>
     </div>
   </div>`;
+
 
   // ── Фаза цикла
   if (d.phaseName && d.phaseKey) {
@@ -1005,6 +1010,10 @@ function encodeData(obj) {
 
 function startWorkout(enc) {
   const t = JSON.parse(decodeURIComponent(enc));
+
+  if (t.staged) { startStagedWorkout(t); return; }
+
+  // Старый простой шаблон (плоский список упражнений)
   let exHtml = (t.exercises || []).map((ex, i) => `
     <div class="form-group">
       <label class="form-lbl">${ex.name}</label>
@@ -1031,6 +1040,75 @@ function startWorkout(enc) {
       <button class="modal-btn modal-btn-primary" onclick="saveWorkout('${t.name}',${t.exercises.length})">Сохранить</button>
     </div>`);
 }
+
+  function startStagedWorkout(t) {
+  let html = `<div class="modal-title">${t.name}</div>`;
+  let exCounter = 0;
+
+  t.stages.forEach((stage, si) => {
+    html += `<div style="font-size:13px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:0.06em;margin:${si>0?'20px':'0'} 0 10px">${stage.title}</div>`;
+
+    if (stage.type === 'stretch') {
+      html += `<div class="form-group">
+        <label class="form-lbl">Сделала растяжку? (мин)</label>
+        <input class="form-field" type="number" id="stage${si}-dur" placeholder="${stage.durationMin}">
+      </div>`;
+    }
+
+    if (stage.type === 'circuit') {
+      html += `<div class="form-group">
+        <label class="form-lbl">Кругов сделано</label>
+        <input class="form-field" type="number" id="stage${si}-rounds" placeholder="${stage.rounds}">
+      </div>`;
+    }
+
+    if (stage.type === 'strength') {
+      stage.exercises.forEach(ex => {
+        html += `<div class="form-group">
+          <label class="form-lbl">${ex.name}</label>
+          <div class="form-3col">
+            <input class="form-field" type="number" placeholder="подх." value="${ex.defaultSets}" id="ex${exCounter}-s" style="text-align:center">
+            <input class="form-field" type="number" placeholder="повт." value="${ex.defaultReps}" id="ex${exCounter}-r" style="text-align:center">
+            <input class="form-field" type="number" placeholder="кг" value="${ex.defaultWeight||''}" id="ex${exCounter}-w" style="text-align:center">
+          </div>
+        </div>`;
+        exCounter++;
+      });
+    }
+  });
+
+  html += `<div class="form-group">
+    <label class="form-lbl">Общая длительность (мин)</label>
+    <input class="form-field" type="number" id="wdur" placeholder="90">
+  </div>
+  <div class="form-group">
+    <label class="form-lbl">Заметка</label>
+    <input class="form-field" type="text" id="wnote" placeholder="Как прошло?">
+  </div>
+  <div class="modal-footer">
+    <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
+    <button class="modal-btn modal-btn-primary" onclick="saveStagedWorkout('${t.name}',${exCounter})">Сохранить</button>
+  </div>`;
+
+  openModal(html);
+}
+
+async function saveStagedWorkout(name, exCount) {
+  const btn = document.querySelector('#overlay .modal-btn-primary');
+  if (btn.classList.contains('btn-saving')) return;
+  btn.classList.add('btn-saving'); btn.textContent = 'Сохраняю…';
+
+  const exercises = [];
+  for (let i = 0; i < exCount; i++) {
+    exercises.push({ sets: v('ex'+i+'-s'), reps: v('ex'+i+'-r'), weight: v('ex'+i+'-w') });
+  }
+
+  await call({ action:'add_workout', type:name, duration:v('wdur'), exercises:JSON.stringify(exercises), note:v('wnote') });
+  closeModal();
+  showToast('✓ Тренировка записана');
+  loaded.delete('workouts'); loadWorkouts();
+}
+
 
 async function saveWorkout(name, cnt) {
   const btn = document.querySelector('#overlay .modal-btn-primary');
