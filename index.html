@@ -853,13 +853,18 @@ function renderHome(d) {
 // HEALTH
 // ════════════════════════════════════════════════════════
 let hLoading = false;
-
+ 
 async function loadHealth() {
-  if (hLoading) return; hLoading = true;
-  const [hd, sd] = await Promise.all([call({ action: 'health' }), call({ action: 'supps' })]);
-  renderMetrics(hd);
-  renderMood(hd);
-  renderSupps(sd);
+  if (hLoading) return;
+  hLoading = true;
+  try {
+    const [hd, sd] = await Promise.all([call({ action: 'health' }), call({ action: 'supps' })]);
+    renderMetrics(hd);
+    renderMood(hd);
+    renderSupps(sd);
+  } finally {
+    hLoading = false;
+  }
 }
 
 function hTab(name, btn) {
@@ -883,8 +888,8 @@ function renderMetrics(d) {
   const l = d.latest;
   const sleep = (l.deepSleep && l.lightSleep && l.remSleep)
     ? ((+l.deepSleep + +l.lightSleep + +l.remSleep)/60).toFixed(1) : '—';
-
-  document.getElementById('ht-metrics').innerHTML = `
+ 
+  document.getElementById('ht-metrics').innerHTML = btns + `
     <div class="metric-grid">
       ${mCell('Вес', l.weight, 'кг', 'var(--blush)')}
       ${mCell('% жира', l.fat, '%', 'var(--blush)')}
