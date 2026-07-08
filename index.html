@@ -900,7 +900,7 @@ function renderMetrics(d) {
       ${mCell('% жира', r1(l.fat), '%', 'var(--blush)')}
       ${mCell('Мышцы', r1(l.muscle), 'кг', 'var(--sage)')}
       ${mCell('Шаги', l.steps ? Math.round(l.steps).toLocaleString('ru') : '—', '/день', 'var(--slate)')}
-      ${mCell('Сон', sleep, 'ч/ночь', 'var(--lavender)')}
+      ${mCell('% воды', r1(l.water), '%', 'var(--lavender)')}
       ${mCell('Энергия', r1(l.energy), '/ 5', 'var(--sand)')}
     </div>
     <button class="add-btn" onclick="openMoodModal()">+ Записать состояние</button>`;
@@ -914,28 +914,73 @@ function mCell(label, val, unit, color) {
   </div>`;
 }
 
+let moodEntriesCache = [];
 function renderMood(d) {
   const entries = (d.mood || []).slice(-14).reverse();
+  moodEntriesCache = entries;
   if (!entries.length) {
     document.getElementById('ht-mood').innerHTML = '<div class="empty">Записей о состоянии пока нет</div>';
     return;
   }
   let html = '<div class="flow">';
-  entries.forEach(m => {
+  entries.forEach((m, i) => {
     const sc = +m.score || 0;
     const em = sc >= 8 ? '🌟' : sc >= 6 ? '🙂' : sc >= 4 ? '😐' : '💙';
-    html += `<div class="card"><div class="card-body" style="padding-top:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:14px">${em} ${sc}/10 ${m.tag ? '· ' + m.tag : ''}</div>
-        <div style="font-size:11px;color:var(--ink3)">${m.date}</div>
+    html += `<div class="card" style="cursor:pointer" onclick="openEditMoodModal(${i})">
+      <div class="card-body" style="padding-top:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:14px">${em} ${sc}/10 ${m.tag ? '· ' + m.tag : ''}</div>
+          <div style="font-size:11px;color:var(--ink3)">${m.date}</div>
+        </div>
+        ${m.phase ? `<div style="font-size:12px;color:var(--ink3);margin-top:4px">${m.phase}, день ${m.cycleDay||'?'}</div>` : ''}
       </div>
-      ${m.phase ? `<div style="font-size:12px;color:var(--ink3);margin-top:4px">${m.phase}, день ${m.cycleDay||'?'}</div>` : ''}
-    </div></div>`;
+    </div>`;
   });
   html += '</div>';
   document.getElementById('ht-mood').innerHTML = html;
 }
 
+function openEditMoodModal(i) {
+  const m = moodEntriesCache[i];
+  if (!m) return;
+  openModal(`
+    <div class="modal-title">Запись за ${m.date}</div>
+    <div class="form-group" style="text-align:center">
+      <input class="form-field" id="em-score" type="number" min="1" max="10" value="${m.score||''}"
+        style="font-size:36px;letter-spacing:8px;text-align:center;padding:18px">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Одним словом</label>
+      <input class="form-field" id="em-tag" type="text" value="${(m.tag||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Заметка</label>
+      <input class="form-field" id="em-note" type="text" value="${(m.note||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="deleteMoodEntry(${m.row})">🗑 Удалить</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveEditMood(${m.row})">Сохранить</button>
+    </div>`);
+}
+
+async function saveEditMood(row) {
+  const btn = document.querySelector('#overlay .modal-btn-primary');
+  if (btn.classList.contains('btn-saving')) return;
+  btn.classList.add('btn-saving'); btn.textContent = 'Сохраняю…';
+  const r = await call({ action:'edit_mood', row, score:v('em-score'), tag:v('em-tag'), note:v('em-note') });
+  closeModal();
+  if (r.error) { showToast('Ошибка: ' + r.error); return; }
+  showToast('✓ Запись обновлена');
+  loaded.delete('health'); if (activeTab==='health') loadHealth();
+}
+
+async function deleteMoodEntry(row) {
+  if (!confirm('Удалить эту запись?')) return;
+  await call({ action:'delete_mood', row });
+  closeModal();
+  showToast('✓ Запись удалена');
+  loaded.delete('health'); if (activeTab==='health') loadHealth();
+}
 function renderSupps(d) {
   const supps = d.supps || [];
   if (!supps.length) {
@@ -951,11 +996,21 @@ function renderSupps(d) {
         <div class="row-name">${s.name}</div>
         <div style="font-size:12px;color:var(--ink3);margin-top:1px">с ${s.startDate}</div>
       </div>
-      <div class="row-meta ${warn ? 'row-warn' : ''}">${ds}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="row-meta ${warn ? 'row-warn' : ''}">${ds}</div>
+        <button onclick="completeSuppUI('${esc(s.name)}',this)" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--ink3);cursor:pointer;font-family:var(--font)">Завершить</button>
+      </div>
     </div>`;
   });
   html += '</div></div></div>';
   document.getElementById('ht-supps').innerHTML = html;
+}
+
+async function completeSuppUI(name, btn) {
+  btn.textContent = '✓'; btn.disabled = true;
+  await call({ action:'complete_supp', name });
+  showToast('✓ Курс завершён');
+  loaded.delete('health'); if (activeTab==='health') loadHealth();
 }
 
 // ════════════════════════════════════════════════════════
