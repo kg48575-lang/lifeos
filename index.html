@@ -481,6 +481,22 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 
 /* ─── LOADING ────────────────────────────────────────────── */
 .loading { padding: 40px 18px; text-align: center; color: var(--ink3); font-size: 13px; }
+
+/* ─── TOAST ──────────────────────────────────────────────── */
+#toast {
+  position: fixed; left: 50%; bottom: calc(var(--tab-h) + 24px);
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink); color: var(--cream);
+  padding: 12px 20px; border-radius: 100px;
+  font-size: 13px; font-family: var(--font);
+  opacity: 0; pointer-events: none;
+  transition: all 0.25s ease;
+  z-index: 400; white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+ 
+.btn-saving { opacity: 0.5; pointer-events: none; }
+ 
 </style>
 </head>
 <body>
@@ -612,6 +628,8 @@ select.form-field { appearance: none; -webkit-appearance: none; }
   </div>
 </div>
 
+<div id="toast"></div>
+  
 <script>
 // ════════════════════════════════════════════════════════
 // CONFIG
@@ -853,8 +871,13 @@ function hTab(name, btn) {
 }
 
 function renderMetrics(d) {
+  const btns = `<div class="qa-grid" style="padding:0 16px 12px">
+    <button class="qa-btn" onclick="openDailyHealthModal()"><span class="qa-icon">📅</span>Данные за день</button>
+    <button class="qa-btn" onclick="openWeeklyHealthModal()"><span class="qa-icon">📆</span>Данные за неделю</button>
+  </div>`;
+ 
   if (!d.latest) {
-    document.getElementById('ht-metrics').innerHTML = '<div class="empty">Нет данных из таблицы здоровья</div>';
+    document.getElementById('ht-metrics').innerHTML = btns + '<div class="empty">Нет данных из таблицы здоровья</div>';
     return;
   }
   const l = d.latest;
@@ -1005,14 +1028,17 @@ function startWorkout(enc) {
 }
 
 async function saveWorkout(name, cnt) {
+  const btn = document.querySelector('#overlay .modal-btn-primary');
+  if (btn.classList.contains('btn-saving')) return;
+  btn.classList.add('btn-saving'); btn.textContent = 'Сохраняю…';
   const exercises = [];
   for (let i = 0; i < cnt; i++) {
     exercises.push({ sets: v('s'+i), reps: v('r'+i), weight: v('w'+i) });
   }
   await call({ action:'add_workout', type:name, duration:v('wdur'), exercises:JSON.stringify(exercises), note:v('wnote') });
   closeModal();
-  loaded.delete('workouts');
-  loadWorkouts();
+  showToast('✓ Тренировка записана');
+  loaded.delete('workouts'); loadWorkouts();
 }
 
 // ════════════════════════════════════════════════════════
@@ -1240,8 +1266,13 @@ function openAddTask() {
 
 async function saveTask() {
   const title = v('nt'); if (!title) return;
+  const btn = document.querySelector('#overlay .modal-btn-primary');
+  if (btn.classList.contains('btn-saving')) return;
+  btn.classList.add('btn-saving'); btn.textContent = 'Добавляю…';
   await call({ action:'add_task', title, category:v('nc'), deadline:v('nd') });
-  closeModal(); loaded.delete('lists'); if (activeTab==='lists') loadLists();
+  closeModal();
+  showToast('✓ Задача добавлена');
+  loaded.delete('lists'); if (activeTab==='lists') loadLists();
 }
 
 function openAddShop() {
@@ -1267,8 +1298,13 @@ function openAddShop() {
 
 async function saveShop() {
   const name = v('si'); if (!name) return;
+  const btn = document.querySelector('#overlay .modal-btn-primary');
+  if (btn.classList.contains('btn-saving')) return;
+  btn.classList.add('btn-saving'); btn.textContent = 'Добавляю…';
   await call({ action:'add_shopping', name, category:v('sc') });
-  closeModal(); loaded.delete('lists'); if (activeTab==='lists') loadLists();
+  closeModal();
+  showToast('✓ Добавлено в покупки');
+  loaded.delete('lists'); if (activeTab==='lists') loadLists();
 }
 
 function openMoodModal() {
@@ -1301,10 +1337,94 @@ function pickMood(el, tag) {
 
 async function saveMood() {
   const score = v('ms'); if (!score) return;
+  const btn = document.querySelector('#overlay .modal-btn-primary');
+  if (btn.classList.contains('btn-saving')) return; // защита от повторного тапа
+  btn.classList.add('btn-saving'); btn.textContent = 'Записываю…';
   await call({ action:'add_mood', score, tag:v('mt') });
   closeModal();
+  showToast('✓ Состояние записано');
+  loaded.delete('health'); if (activeTab==='health') loadHealth();
+  loaded.delete('home');   loadHome();
 }
 
+function openDailyHealthModal() {
+  openModal(`
+    <div class="modal-title">Данные за сегодня</div>
+    <div class="form-group"><label class="form-lbl">Вес (кг)</label><input class="form-field" id="dh-weight" type="number" step="0.1" placeholder="67.2"></div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-lbl">% жира</label><input class="form-field" id="dh-fat" type="number" step="0.1" placeholder="36.5"></div>
+      <div class="form-group"><label class="form-lbl">Мышцы (кг)</label><input class="form-field" id="dh-muscle" type="number" step="0.1" placeholder="22.4"></div>
+    </div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-lbl">% воды</label><input class="form-field" id="dh-water" type="number" step="0.1" placeholder="43.1"></div>
+      <div class="form-group"><label class="form-lbl">Энергия (1–7)</label><input class="form-field" id="dh-energy" type="number" placeholder="4"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Шаги (за вчера)</label>
+      <input class="form-field" id="dh-steps" type="number" placeholder="7500">
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveDailyHealth()">Записать</button>
+    </div>`);
+}
+ 
+async function saveDailyHealth() {
+  const btn = document.querySelector('#overlay .modal-btn-primary');
+  if (btn.classList.contains('btn-saving')) return;
+  btn.classList.add('btn-saving'); btn.textContent = 'Записываю…';
+  const r = await call({
+    action: 'add_daily_health',
+    weight: v('dh-weight'), fat: v('dh-fat'), muscle: v('dh-muscle'),
+    water: v('dh-water'), steps: v('dh-steps'), energy: v('dh-energy')
+  });
+  closeModal();
+  if (r.error) { showToast('Ошибка: ' + r.error); return; }
+  showToast(r.stepsToYesterday ? '✓ Записано (шаги — за вчера)' : '✓ Данные за день записаны');
+  loaded.delete('health'); if (activeTab==='health') loadHealth();
+}
+ 
+function openWeeklyHealthModal() {
+  openModal(`
+    <div class="modal-title">Данные за неделю</div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-lbl">Зарядка (раз)</label><input class="form-field" id="wh-workoutDays" type="number" placeholder="5"></div>
+      <div class="form-group"><label class="form-lbl">Тренировки (раз)</label><input class="form-field" id="wh-trainings" type="number" placeholder="2"></div>
+    </div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-lbl">Длительность (мин)</label><input class="form-field" id="wh-duration" type="number" placeholder="60"></div>
+      <div class="form-group"><label class="form-lbl">Пульс</label><input class="form-field" id="wh-pulse" type="number" placeholder="120"></div>
+    </div>
+    <div class="form-3col">
+      <div class="form-group"><label class="form-lbl">Глуб. сон</label><input class="form-field" id="wh-deepSleep" type="number" placeholder="140"></div>
+      <div class="form-group"><label class="form-lbl">Лёгкий сон</label><input class="form-field" id="wh-lightSleep" type="number" placeholder="210"></div>
+      <div class="form-group"><label class="form-lbl">Быстрый сон</label><input class="form-field" id="wh-remSleep" type="number" placeholder="130"></div>
+    </div>
+    <div class="form-group"><label class="form-lbl">БАДы</label><input class="form-field" id="wh-bads" type="text" placeholder="Д3 + креатин"></div>
+    <div class="form-group"><label class="form-lbl">МЦ</label><input class="form-field" id="wh-cycle" type="text" placeholder="М (если было)"></div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveWeeklyHealth()">Записать</button>
+    </div>`);
+}
+ 
+async function saveWeeklyHealth() {
+  const btn = document.querySelector('#overlay .modal-btn-primary');
+  if (btn.classList.contains('btn-saving')) return;
+  btn.classList.add('btn-saving'); btn.textContent = 'Записываю…';
+  const r = await call({
+    action: 'add_weekly_health',
+    workoutDays: v('wh-workoutDays'), trainings: v('wh-trainings'),
+    duration: v('wh-duration'), pulse: v('wh-pulse'),
+    deepSleep: v('wh-deepSleep'), lightSleep: v('wh-lightSleep'), remSleep: v('wh-remSleep'),
+    bads: v('wh-bads'), cycle: v('wh-cycle')
+  });
+  closeModal();
+  if (r.error) { showToast('Ошибка: ' + r.error); return; }
+  showToast('✓ Данные за неделю записаны');
+  loaded.delete('health'); if (activeTab==='health') loadHealth();
+}
+  
 // ════════════════════════════════════════════════════════
 // MODAL
 // ════════════════════════════════════════════════════════
@@ -1322,7 +1442,14 @@ function v(id) { return (document.getElementById(id)?.value || '').trim(); }
 function esc(s) { return s.replace(/'/g,"&#39;"); }
 function pDays(n) { return n===1?'день':n>=2&&n<=4?'дня':'дней'; }
 function autoH(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,110)+'px'; }
-
+function showToast(text) {
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+  
 // ════════════════════════════════════════════════════════
 // START
 // ════════════════════════════════════════════════════════
