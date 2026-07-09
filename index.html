@@ -842,6 +842,20 @@ function showSkeleton(containerId, count = 3) {
   }).join('');
 }
 
+function showBload(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = `
+    <div class="bload">
+      <div class="bload-bar" style="top:0"></div>
+      <div class="bload-bar" style="top:70px"></div>
+      <div class="bload-bar" style="top:140px"></div>
+      <div class="bload-chip b1">📅</div>
+      <div class="bload-chip b2">✨</div>
+      <div class="bload-chip b3">🌿</div>
+    </div>`;
+}
+  
 // ════════════════════════════════════════════════════════
 // HOME
 // ════════════════════════════════════════════════════════
@@ -860,6 +874,7 @@ const PHASE_TIP = {
 };
 
 async function loadHome() {
+  showBload('home-flow');
   const d = await call({ action: 'dashboard' });
   renderHome(d);
   call({ action: 'home_insight' }).then(r => {
@@ -990,7 +1005,7 @@ let hLoading = false;
 async function loadHealth() {
   if (hLoading) return;
   hLoading = true;
-  showSkeleton('ht-metrics');
+  showBload('ht-metrics');
   try {
     const [hd, sd, bs] = await Promise.all([
       call({ action: 'health' }),
@@ -1178,6 +1193,7 @@ async function completeSuppUI(name, btn) {
 // WORKOUTS
 // ════════════════════════════════════════════════════════
 async function loadWorkouts() {
+  showBload('workout-flow');
   const [wd, td] = await Promise.all([call({ action:'workouts' }), call({ action:'workout_templates' })]);
   renderWorkouts(wd, td);
 }
@@ -1346,7 +1362,7 @@ async function saveWorkout(name, cnt) {
 let listsCache = {};
 
 async function loadLists() {
-  showSkeleton('lt-tasks');
+  showBload('lt-tasks');
   const [tasks, shop, watch, gifts] = await Promise.all([
     call({ action:'tasks' }), call({ action:'shopping' }),
     call({ action:'watchlist' }), call({ action:'gifts' })
