@@ -482,6 +482,20 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 /* ─── LOADING ────────────────────────────────────────────── */
 .loading { padding: 40px 18px; text-align: center; color: var(--ink3); font-size: 13px; }
 
+/* ─── SKELETON LOADING ───────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--cream2) 25%, var(--cream3) 50%, var(--cream2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius);
+  height: 80px;
+}
+.skeleton-flow { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+
 /* ─── TOAST ──────────────────────────────────────────────── */
 #toast {
   position: fixed; left: 50%; bottom: calc(var(--tab-h) + 24px);
@@ -494,10 +508,10 @@ select.form-field { appearance: none; -webkit-appearance: none; }
   z-index: 400; white-space: nowrap;
 }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
- 
+
 .btn-saving { opacity: 0.5; pointer-events: none; }
- 
-</>
+
+</style>
 </head>
 <body>
 
@@ -629,7 +643,7 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 </div>
 
 <div id="toast"></div>
-  
+
 <script>
 // ════════════════════════════════════════════════════════
 // CONFIG
@@ -719,19 +733,6 @@ function showSkeleton(containerId, count = 3) {
   el.innerHTML = Array(count).fill('<div class="skeleton"></div>').join('');
 }
 
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-.skeleton {
-  background: linear-gradient(90deg, var(--cream2) 25%, var(--cream3) 50%, var(--cream2) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
-  border-radius: var(--radius);
-  height: 80px;
-}
-.skeleton-flow { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
-  
 // ════════════════════════════════════════════════════════
 // HOME
 // ════════════════════════════════════════════════════════
