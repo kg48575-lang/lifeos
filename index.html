@@ -530,6 +530,53 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 
 .btn-saving { opacity: 0.5; pointer-events: none; }
 
+/* ─── ANIM: ОТКРЫТИЕ ПРИЛОЖЕНИЯ ──────────────────────────── */
+#app-open {
+  position: fixed; inset: 0; z-index: 250;
+  background: var(--cream);
+  display: none;
+  align-items: center; justify-content: center;
+}
+#app-open.show { display: flex; }
+
+.ao-wrap { position: relative; width: 210px; height: 210px; }
+.ao-chip {
+  position: absolute; top: 78px; left: 80px;
+  width: 50px; height: 50px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.ao-chip.c1 { background: var(--sage-soft);     animation: aot1 2.6s ease-out 1; }
+.ao-chip.c2 { background: var(--blush-soft);    animation: aot2 2.6s ease-out 1 .04s; }
+.ao-chip.c3 { background: var(--lavender-soft); animation: aot3 2.6s ease-out 1 .08s; }
+.ao-chip.c4 { background: var(--slate-soft);    animation: aot4 2.6s ease-out 1 .12s; }
+.ao-chip.c5 { background: var(--sand-soft);     animation: aot5 2.6s ease-out 1 .16s; }
+
+@keyframes aot1{0%,7%{transform:translate(-8px,-8px) rotate(-6deg)}40%{transform:translate(-72px,-40px) rotate(-58deg)}83%{transform:translate(-60px,-9px) rotate(-35deg)}100%{transform:translate(-8px,-8px) rotate(-6deg)}}
+@keyframes aot2{0%,7%{transform:translate(-4px,-4px) rotate(-2deg)}40%{transform:translate(88px,-58px) rotate(34deg)}83%{transform:translate(57px,-41px) rotate(15deg)}100%{transform:translate(-4px,-4px) rotate(-2deg)}}
+@keyframes aot3{0%,7%{transform:translate(0,0) rotate(3deg)}40%{transform:translate(-18px,86px) rotate(-72deg)}83%{transform:translate(-27px,51px) rotate(-35deg)}100%{transform:translate(0,0) rotate(3deg)}}
+@keyframes aot4{0%,7%{transform:translate(4px,4px) rotate(-3deg)}40%{transform:translate(-84px,52px) rotate(46deg)}83%{transform:translate(-20px,16px) rotate(20deg)}100%{transform:translate(4px,4px) rotate(-3deg)}}
+@keyframes aot5{0%,7%{transform:translate(8px,8px) rotate(5deg)}40%{transform:translate(70px,74px) rotate(-20deg)}83%{transform:translate(24px,59px) rotate(-8deg)}100%{transform:translate(8px,8px) rotate(5deg)}}
+
+/* ─── ANIM: ЗАГРУЗКА БЛОКОВ ──────────────────────────────── */
+.bload { position: relative; width: 100%; max-width: 300px; height: 190px; margin: 24px auto; }
+.bload-bar {
+  position: absolute; left: 0; width: 100%; height: 46px;
+  border-radius: 12px; background: var(--cream2);
+}
+.bload-chip {
+  position: absolute; left: 8px; width: 42px; height: 42px;
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.bload-chip.b1 { top: 2px;   background: var(--slate-soft);    animation: bl1 3.4s ease-out infinite; }
+.bload-chip.b2 { top: 60px;  background: var(--lavender-soft); animation: bl2 3.4s ease-out infinite .12s; }
+.bload-chip.b3 { top: 118px; background: var(--sage-soft);     animation: bl3 3.4s ease-out infinite .24s; }
+
+@keyframes bl1{0%,10%{transform:translate(160px,150px) rotate(20deg);opacity:0}42%,68%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(160px,150px) rotate(20deg);opacity:0}}
+@keyframes bl2{0%,10%{transform:translate(160px,90px) rotate(20deg);opacity:0}42%,68%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(160px,90px) rotate(20deg);opacity:0}}
+@keyframes bl3{0%,10%{transform:translate(160px,30px) rotate(20deg);opacity:0}42%,68%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(160px,30px) rotate(20deg);opacity:0}}
+  
 </style>
 </head>
 <body>
@@ -551,6 +598,17 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 </div>
 
 <!-- ─── APP ───────────────────────────────────────────────── -->
+
+<div id="app-open">
+  <div class="ao-wrap">
+    <div class="ao-chip c1">🌿</div>
+    <div class="ao-chip c2">🌙</div>
+    <div class="ao-chip c3">🪶</div>
+    <div class="ao-chip c4">📅</div>
+    <div class="ao-chip c5">✨</div>
+  </div>
+</div>  
+  
 <div id="app" class="gone">
 
   <div class="scroll-area" id="scroll">
@@ -561,7 +619,16 @@ select.form-field { appearance: none; -webkit-appearance: none; }
         <div class="page-label" id="h-label">сегодня</div>
         <div class="page-title" id="h-title">—</div>
       </div>
-      <div class="flow" id="home-flow"><div class="loading">Загружаю…</div></div>
+      <div class="flow" id="home-flow">
+  <div class="bload">
+    <div class="bload-bar" style="top:0"></div>
+    <div class="bload-bar" style="top:58px"></div>
+    <div class="bload-bar" style="top:116px"></div>
+    <div class="bload-chip b1">📅</div>
+    <div class="bload-chip b2">✨</div>
+    <div class="bload-chip b3">🌿</div>
+  </div>
+</div>
     </div>
 
     <!-- HEALTH -->
@@ -586,7 +653,16 @@ select.form-field { appearance: none; -webkit-appearance: none; }
         <div class="page-label">активность</div>
         <div class="page-title">Тренировки</div>
       </div>
-      <div id="workout-flow"><div class="loading">Загружаю…</div></div>
+      <div id="workout-flow">
+  <div class="bload">
+    <div class="bload-bar" style="top:0"></div>
+    <div class="bload-bar" style="top:58px"></div>
+    <div class="bload-bar" style="top:116px"></div>
+    <div class="bload-chip b1">📅</div>
+    <div class="bload-chip b2">✨</div>
+    <div class="bload-chip b3">🌿</div>
+  </div>
+</div>
     </div>
 
     <!-- LISTS -->
@@ -705,7 +781,12 @@ async function verifyCode() {
 
 function showApp() {
   document.getElementById('auth').classList.add('gone');
-  document.getElementById('app').classList.remove('gone');
+  const anim = document.getElementById('app-open');
+  anim.classList.add('show');
+  setTimeout(() => {
+    anim.classList.remove('show');
+    document.getElementById('app').classList.remove('gone');
+  }, 2000);
 }
 
 // ════════════════════════════════════════════════════════
