@@ -119,7 +119,7 @@ html, body {
   font-size: 13px; color: var(--blush);
   text-align: center; display: none;
 }
-  
+
 /* ─── SHELL ─────────────────────────────────────────────── */
 #app { display: flex; flex-direction: column; height: 100dvh; }
 #app.gone { display: none; }
@@ -487,14 +487,33 @@ select.form-field { appearance: none; -webkit-appearance: none; }
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-.skeleton {
-  background: linear-gradient(90deg, var(--cream2) 25%, var(--cream3) 50%, var(--cream2) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
-  border-radius: var(--radius);
-  height: 80px;
+@keyframes skeletonIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.skeleton-flow { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+.skeleton-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  animation: skeletonIn 0.4s ease both, skeletonPulse 1.6s ease-in-out 0.4s infinite;
+}
+.skeleton-line {
+  height: 11px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--cream2) 20%, var(--cream3) 50%, var(--cream2) 80%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+.skeleton-line + .skeleton-line { margin-top: 9px; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-60 { width: 60%; }
+.skeleton-line.w-80 { width: 80%; }
+.skeleton-line.w-90 { width: 90%; }
 
 /* ─── TOAST ──────────────────────────────────────────────── */
 #toast {
@@ -730,7 +749,16 @@ function loadAll() { loadHome(); }
 
 function showSkeleton(containerId, count = 3) {
   const el = document.getElementById(containerId);
-  el.innerHTML = Array(count).fill('<div class="skeleton"></div>').join('');
+  const patterns = [
+    ['w-40', 'w-90', 'w-60'],
+    ['w-60', 'w-80'],
+    ['w-40', 'w-90', 'w-40']
+  ];
+  el.innerHTML = Array(count).fill(0).map((_, i) => {
+    const lines = patterns[i % patterns.length]
+      .map(w => `<div class="skeleton-line ${w}"></div>`).join('');
+    return `<div class="skeleton-card" style="animation-delay:${i * 0.12}s">${lines}</div>`;
+  }).join('');
 }
 
 // ════════════════════════════════════════════════════════
