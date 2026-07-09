@@ -539,43 +539,43 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 }
 #app-open.show { display: flex; }
 
-.ao-wrap { position: relative; width: 210px; height: 210px; }
+.ao-wrap { position: relative; width: 280px; height: 280px; }
 .ao-chip {
-  position: absolute; top: 78px; left: 80px;
-  width: 50px; height: 50px; border-radius: 14px;
+  position: absolute; top: 107px; left: 107px;
+  width: 66px; height: 66px; border-radius: 18px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
+  font-size: 30px;
 }
-.ao-chip.c1 { background: var(--sage-soft);     animation: aot1 2.6s ease-out 1; }
-.ao-chip.c2 { background: var(--blush-soft);    animation: aot2 2.6s ease-out 1 .04s; }
-.ao-chip.c3 { background: var(--lavender-soft); animation: aot3 2.6s ease-out 1 .08s; }
-.ao-chip.c4 { background: var(--slate-soft);    animation: aot4 2.6s ease-out 1 .12s; }
-.ao-chip.c5 { background: var(--sand-soft);     animation: aot5 2.6s ease-out 1 .16s; }
+.ao-chip.c1 { background: var(--sage-soft);     animation: aot1 3s ease-out 1; }
+.ao-chip.c2 { background: var(--blush-soft);    animation: aot2 3s ease-out 1 .04s; }
+.ao-chip.c3 { background: var(--lavender-soft); animation: aot3 3s ease-out 1 .08s; }
+.ao-chip.c4 { background: var(--slate-soft);    animation: aot4 3s ease-out 1 .12s; }
+.ao-chip.c5 { background: var(--sand-soft);     animation: aot5 3s ease-out 1 .16s; }
 
-@keyframes aot1{0%,7%{transform:translate(-8px,-8px) rotate(-6deg)}40%{transform:translate(-72px,-40px) rotate(-58deg)}83%{transform:translate(-60px,-9px) rotate(-35deg)}100%{transform:translate(-8px,-8px) rotate(-6deg)}}
-@keyframes aot2{0%,7%{transform:translate(-4px,-4px) rotate(-2deg)}40%{transform:translate(88px,-58px) rotate(34deg)}83%{transform:translate(57px,-41px) rotate(15deg)}100%{transform:translate(-4px,-4px) rotate(-2deg)}}
-@keyframes aot3{0%,7%{transform:translate(0,0) rotate(3deg)}40%{transform:translate(-18px,86px) rotate(-72deg)}83%{transform:translate(-27px,51px) rotate(-35deg)}100%{transform:translate(0,0) rotate(3deg)}}
-@keyframes aot4{0%,7%{transform:translate(4px,4px) rotate(-3deg)}40%{transform:translate(-84px,52px) rotate(46deg)}83%{transform:translate(-20px,16px) rotate(20deg)}100%{transform:translate(4px,4px) rotate(-3deg)}}
-@keyframes aot5{0%,7%{transform:translate(8px,8px) rotate(5deg)}40%{transform:translate(70px,74px) rotate(-20deg)}83%{transform:translate(24px,59px) rotate(-8deg)}100%{transform:translate(8px,8px) rotate(5deg)}}
+@keyframes aot1{0%,7%{transform:translate(-11px,-11px) rotate(-6deg)}40%{transform:translate(-96px,-54px) rotate(-58deg)}83%{transform:translate(-80px,-12px) rotate(-35deg)}100%{transform:translate(-11px,-11px) rotate(-6deg)}}
+@keyframes aot2{0%,7%{transform:translate(-5px,-5px) rotate(-2deg)}40%{transform:translate(118px,-78px) rotate(34deg)}83%{transform:translate(76px,-55px) rotate(15deg)}100%{transform:translate(-5px,-5px) rotate(-2deg)}}
+@keyframes aot3{0%,7%{transform:translate(0,0) rotate(3deg)}40%{transform:translate(-24px,115px) rotate(-72deg)}83%{transform:translate(-36px,68px) rotate(-35deg)}100%{transform:translate(0,0) rotate(3deg)}}
+@keyframes aot4{0%,7%{transform:translate(5px,5px) rotate(-3deg)}40%{transform:translate(-113px,70px) rotate(46deg)}83%{transform:translate(-27px,21px) rotate(20deg)}100%{transform:translate(5px,5px) rotate(-3deg)}}
+@keyframes aot5{0%,7%{transform:translate(11px,11px) rotate(5deg)}40%{transform:translate(94px,99px) rotate(-20deg)}83%{transform:translate(32px,79px) rotate(-8deg)}100%{transform:translate(11px,11px) rotate(5deg)}}
 
 /* ─── ANIM: ЗАГРУЗКА БЛОКОВ ──────────────────────────────── */
-.bload { position: relative; width: 100%; max-width: 300px; height: 190px; margin: 24px auto; }
+.bload { position: relative; width: 100%; max-width: 360px; height: 210px; margin: 24px auto; }
 .bload-bar {
-  position: absolute; left: 0; width: 100%; height: 46px;
+  position: absolute; left: 0; width: 100%; height: 56px;
   border-radius: 12px; background: var(--cream2);
 }
 .bload-chip {
-  position: absolute; left: 8px; width: 42px; height: 42px;
+  position: absolute; left: 10px; width: 50px; height: 50px;
   border-radius: 12px; display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+  font-size: 24px;
 }
-.bload-chip.b1 { top: 2px;   background: var(--slate-soft);    animation: bl1 3.4s ease-out infinite; }
-.bload-chip.b2 { top: 60px;  background: var(--lavender-soft); animation: bl2 3.4s ease-out infinite .12s; }
-.bload-chip.b3 { top: 118px; background: var(--sage-soft);     animation: bl3 3.4s ease-out infinite .24s; }
+.bload-chip.b1 { top: 3px;   background: var(--slate-soft);    animation: bl1 3.6s ease-out infinite; }
+.bload-chip.b2 { top: 73px;  background: var(--lavender-soft); animation: bl2 3.6s ease-out infinite .12s; }
+.bload-chip.b3 { top: 143px; background: var(--sage-soft);     animation: bl3 3.6s ease-out infinite .24s; }
 
-@keyframes bl1{0%,10%{transform:translate(160px,150px) rotate(20deg);opacity:0}42%,68%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(160px,150px) rotate(20deg);opacity:0}}
-@keyframes bl2{0%,10%{transform:translate(160px,90px) rotate(20deg);opacity:0}42%,68%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(160px,90px) rotate(20deg);opacity:0}}
-@keyframes bl3{0%,10%{transform:translate(160px,30px) rotate(20deg);opacity:0}42%,68%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(160px,30px) rotate(20deg);opacity:0}}
+@keyframes bl1{0%,10%{transform:translate(200px,150px) rotate(20deg);opacity:0}42%,68%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(200px,150px) rotate(20deg);opacity:0}}
+@keyframes bl2{0%,10%{transform:translate(200px,90px) rotate(20deg);opacity:0}42%,68%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(200px,90px) rotate(20deg);opacity:0}}
+@keyframes bl3{0%,10%{transform:translate(200px,30px) rotate(20deg);opacity:0}42%,68%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(200px,30px) rotate(20deg);opacity:0}}
   
 </style>
 </head>
@@ -622,8 +622,8 @@ select.form-field { appearance: none; -webkit-appearance: none; }
       <div class="flow" id="home-flow">
   <div class="bload">
     <div class="bload-bar" style="top:0"></div>
-    <div class="bload-bar" style="top:58px"></div>
-    <div class="bload-bar" style="top:116px"></div>
+    <div class="bload-bar" style="top:70px"></div>
+    <div class="bload-bar" style="top:140px"></div>
     <div class="bload-chip b1">📅</div>
     <div class="bload-chip b2">✨</div>
     <div class="bload-chip b3">🌿</div>
@@ -656,8 +656,8 @@ select.form-field { appearance: none; -webkit-appearance: none; }
       <div id="workout-flow">
   <div class="bload">
     <div class="bload-bar" style="top:0"></div>
-    <div class="bload-bar" style="top:58px"></div>
-    <div class="bload-bar" style="top:116px"></div>
+    <div class="bload-bar" style="top:70px"></div>
+    <div class="bload-bar" style="top:140px"></div>
     <div class="bload-chip b1">📅</div>
     <div class="bload-chip b2">✨</div>
     <div class="bload-chip b3">🌿</div>
@@ -786,7 +786,7 @@ function showApp() {
   setTimeout(() => {
     anim.classList.remove('show');
     document.getElementById('app').classList.remove('gone');
-  }, 2000);
+  }, 3100);
 }
 
 // ════════════════════════════════════════════════════════
@@ -860,7 +860,6 @@ const PHASE_TIP = {
 };
 
 async function loadHome() {
-  showSkeleton('home-flow');
   const d = await call({ action: 'dashboard' });
   renderHome(d);
   call({ action: 'home_insight' }).then(r => {
@@ -1179,7 +1178,6 @@ async function completeSuppUI(name, btn) {
 // WORKOUTS
 // ════════════════════════════════════════════════════════
 async function loadWorkouts() {
-  showSkeleton('workout-flow');
   const [wd, td] = await Promise.all([call({ action:'workouts' }), call({ action:'workout_templates' })]);
   renderWorkouts(wd, td);
 }
