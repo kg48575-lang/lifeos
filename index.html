@@ -515,6 +515,50 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 .skeleton-line.w-80 { width: 80%; }
 .skeleton-line.w-90 { width: 90%; }
 
+/* ─── MARGO FAB + PANEL ──────────────────────────────────── */
+.margo-fab {
+  position: fixed; right: 18px;
+  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 18px);
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--ink); color: var(--cream);
+  border: none; cursor: pointer; z-index: 60;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(28,26,23,0.22);
+}
+.margo-fab svg { width: 24px; height: 24px; }
+
+.margo-backdrop {
+  position: fixed; inset: 0; z-index: 90;
+  background: rgba(28,26,23,0.35);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.margo-backdrop.open { opacity: 1; pointer-events: auto; }
+
+.margo-panel {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 91;
+  height: 78dvh;
+  background: var(--cream);
+  border-radius: 24px 24px 0 0;
+  display: flex; flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(.32,.72,0,1);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.margo-panel.open { transform: translateY(0); }
+
+.margo-panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 8px;
+}
+.margo-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: none; background: var(--cream2); color: var(--ink2);
+  font-size: 14px; cursor: pointer;
+}
+.margo-panel .chat-area { flex: 1; overflow-y: auto; }
+  
 /* ─── TOAST ──────────────────────────────────────────────── */
 #toast {
   position: fixed; left: 50%; bottom: calc(var(--tab-h) + 24px);
@@ -684,10 +728,15 @@ select.form-field { appearance: none; -webkit-appearance: none; }
     </div>
 
     <!-- MARGO -->
-    <div class="screen" id="s-margo" style="display:flex;flex-direction:column;height:100%">
-      <div class="page-top">
-        <div class="page-label">ассистент</div>
-        <div class="page-title">Марго</div>
+    <button class="margo-fab" onclick="openMargoPanel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+    
+    <div class="margo-backdrop" id="margo-backdrop" onclick="closeMargoPanel()"></div>
+    <div class="margo-panel" id="margo-panel">
+      <div class="margo-panel-head">
+        <span class="page-label" style="margin:0">ассистент</span>
+        <button class="margo-close" onclick="closeMargoPanel()">✕</button>
       </div>
       <div class="qa-grid" id="qa-grid"></div>
       <div class="chat-area" id="chat-area"></div>
@@ -722,10 +771,6 @@ select.form-field { appearance: none; -webkit-appearance: none; }
     <button class="tab" id="tab-lists" onclick="goTab('lists')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
       Списки
-    </button>
-    <button class="tab" id="tab-margo" onclick="goTab('margo')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      Марго
     </button>
   </nav>
 </div>
@@ -819,10 +864,20 @@ function goTab(name) {
     if (name === 'health')   loadHealth();
     if (name === 'workouts') loadWorkouts();
     if (name === 'lists')    loadLists();
-    if (name === 'margo')    initMargo();
   }
 }
 
+let margoInited = false;
+function openMargoPanel() {
+  document.getElementById('margo-panel').classList.add('open');
+  document.getElementById('margo-backdrop').classList.add('open');
+  if (!margoInited) { margoInited = true; initMargo(); }
+}
+function closeMargoPanel() {
+  document.getElementById('margo-panel').classList.remove('open');
+  document.getElementById('margo-backdrop').classList.remove('open');
+}
+  
 // ════════════════════════════════════════════════════════
 // LOAD ALL
 // ════════════════════════════════════════════════════════
@@ -1012,7 +1067,7 @@ async function loadHealth() {
       call({ action: 'supps' }),
       call({ action: 'body_score_history' })
     ]);
-    renderMetrics(hd);
+    renderMetrics(hd, bs.history);
     renderMood(hd);
     renderSupps(sd);
     document.getElementById('ht-metrics').insertAdjacentHTML('beforeend', renderBodyScoreChart(bs.history));
@@ -1027,7 +1082,7 @@ function hTab(name, btn) {
   });
 }
 
-function renderMetrics(d) {
+function renderMetrics(d, history) {
   const btns = `<div class="qa-grid" style="padding:0 16px 12px">
     <button class="qa-btn" onclick="openDailyHealthModal()"><span class="qa-icon">📅</span>Данные за день</button>
     <button class="qa-btn" onclick="openWeeklyHealthModal()"><span class="qa-icon">📆</span>Данные за неделю</button>
@@ -1040,19 +1095,38 @@ function renderMetrics(d) {
   const l = d.latest;
   const sleep = (l.deepSleep && l.lightSleep && l.remSleep)
     ? ((+l.deepSleep + +l.lightSleep + +l.remSleep)/60).toFixed(1) : '—';
-
+  
+  const prev = history && history.length >= 2 ? history[history.length - 2] : null;
+  const delta = k => prev && l[k] != null ? (parseFloat(l[k]) - parseFloat(prev[k])) : null
+  
   document.getElementById('ht-metrics').innerHTML = btns + `
     <div class="metric-grid">
-      ${mCell('Вес', r1(l.weight), 'кг', 'var(--blush)')}
-      ${mCell('% жира', r1(l.fat), '%', 'var(--blush)')}
-      ${mCell('Мышцы', r1(l.muscle), 'кг', 'var(--sage)')}
+      ${mCell('Вес', r1(l.weight), 'кг', 'var(--blush)', delta('weight'))}
+      ${mCell('% жира', r1(l.fat), '%', 'var(--blush)', delta('fat'))}
+      ${mCell('Мышцы', r1(l.muscle), 'кг', 'var(--sage)', delta('muscle'))}
       ${mCell('Шаги', l.steps ? Math.round(l.steps).toLocaleString('ru') : '—', '/день', 'var(--slate)')}
-      ${mCell('% воды', r1(l.water), '%', 'var(--lavender)')}
+      ${mCell('% воды', r1(l.water), '%', 'var(--lavender)', delta('water'))}
       ${mCell('Энергия', r1(l.energy), '/ 5', 'var(--sand)')}
     </div>
     <button class="add-btn" onclick="openMoodModal()">+ Записать состояние</button>`;
 }
 
+function scoreBreakdown(history) {
+  if (!history || history.length < 2) return '';
+  const a = history[history.length - 2], b = history[history.length - 1];
+  const dScore = b.score - a.score;
+  if (Math.abs(dScore) < 0.3) return 'Индекс почти не изменился с прошлой записи.';
+
+  const parts = [
+    { label: 'изменения % жира',   val: ((100-b.fat) - (100-a.fat)) * 0.4 },
+    { label: 'изменения доли мышц', val: ((b.muscle/b.weight*100) - (a.muscle/a.weight*100)) * 0.4 },
+    { label: 'изменения % воды',    val: ((b.water/60*100) - (a.water/60*100)) * 0.2 }
+  ].sort((x,y) => Math.abs(y.val) - Math.abs(x.val));
+
+  const dir = dScore > 0 ? 'вырос' : 'снизился';
+  return `Индекс ${dir} на ${Math.abs(dScore).toFixed(1)} — в основном за счёт ${parts[0].label}.`;
+}
+  
 function renderBodyScoreChart(history) {
   if (!history || history.length < 2) return '';
   const w = 280, h = 80, pad = 8;
@@ -1078,14 +1152,20 @@ function renderBodyScoreChart(history) {
       <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:${h}px">
         <polyline points="${points}" fill="none" stroke="var(--lavender)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
+        <div style="font-size:12px;color:var(--ink3);margin-top:8px;line-height:1.5">${scoreBreakdown(history)}
+      </div>
     </div>
   </div>`;
 }
         
-function mCell(label, val, unit, color) {
+function mCell(label, val, unit, color, delta) {
+  let arrow = '';
+  if (delta !== null && delta !== undefined && Math.abs(delta) >= 0.1) {
+    arrow = `<span style="color:var(--ink3);font-size:11px;margin-left:4px">${delta > 0 ? '↑' : '↓'}</span>`;
+  }
   return `<div class="metric-cell">
     <div class="metric-label">${label}</div>
-    <div class="metric-value" style="color:${color}">${val || '—'}</div>
+    <div class="metric-value" style="color:${color}">${val || '—'}${arrow}</div>
     <div class="metric-unit">${unit}</div>
   </div>`;
 }
@@ -1484,21 +1564,20 @@ function renderGifts() {
 // ════════════════════════════════════════════════════════
 function initMargo() {
   const cmds = [
-    { icon:'📅', label:'Расписание',    cmd:'расписание' },
-    { icon:'💊', label:'БАДы',          cmd:'бады' },
-    { icon:'📊', label:'Аналитика',     cmd:'аналитика здоровья' },
-    { icon:'✦',  label:'Полный анализ', cmd:'полная аналитика' },
+    { icon:'📅', label:'Расписание',     action:() => sendCmd('расписание') },
+    { icon:'🔍', label:'Найти окно',      action:() => sendCmd('найди окно для встречи') },
+    { icon:'💪', label:'Тренировка',      action:() => { closeMargoPanel(); goTab('workouts'); } },
+    { icon:'❤️', label:'Здоровье',        action:() => { closeMargoPanel(); goTab('health'); } },
+    { icon:'📋', label:'Задачи',          action:() => { closeMargoPanel(); goTab('lists'); } },
+    { icon:'🎁', label:'Идеи подарков',   action:() => { closeMargoPanel(); goTab('lists'); lTab('gifts', document.querySelector('#seg-lists .seg-btn:last-child')); } },
+    { icon:'📆', label:'Открыть календарь', action:() => window.open('https://calendar.google.com/calendar/u/0/r', '_blank') }
   ];
-  document.getElementById('qa-grid').innerHTML = cmds.map(c =>
-    `<button class="qa-btn" onclick="sendCmd('${c.cmd}')">
+  window._margoCmds = cmds;
+  document.getElementById('qa-grid').innerHTML = cmds.map((c,i) =>
+    `<button class="qa-btn" onclick="_margoCmds[${i}].action()">
       <span class="qa-icon">${c.icon}</span>${c.label}
     </button>`
   ).join('');
-}
-
-function sendCmd(cmd) {
-  document.getElementById('chat-inp').value = cmd;
-  chatSend();
 }
 
 function addBubble(text, isMe) {
