@@ -683,11 +683,13 @@ oninput="if(this.value.length===6) verifyCode()">
   </div>
   <div class="seg" id="seg-lists">
     <button class="seg-btn on" onclick="lTab('tasks',this)">Задачи</button>
+    <button class="seg-btn"    onclick="lTab('work',this)">Работа</button>
     <button class="seg-btn"    onclick="lTab('shopping',this)">Купить</button>
     <button class="seg-btn"    onclick="lTab('watch',this)">Смотреть</button>
     <button class="seg-btn"    onclick="lTab('gifts',this)">Подарки</button>
   </div>
   <div id="lt-tasks"></div>
+  <div id="lt-work"     style="display:none"></div>
   <div id="lt-shopping" style="display:none"></div>
   <div id="lt-watch"    style="display:none"></div>
   <div id="lt-gifts"    style="display:none"></div>
@@ -1411,18 +1413,18 @@ let listsCache = {};
 
 async function loadLists() {
   showBload('lt-tasks');
-  const [tasks, shop, watch, gifts] = await Promise.all([
-    call({ action:'tasks' }), call({ action:'shopping' }),
+  const [tasks, work, shop, watch, gifts] = await Promise.all([
+    call({ action:'tasks' }), call({ action:'work_tasks' }), call({ action:'shopping' }),
     call({ action:'watchlist' }), call({ action:'gifts' })
   ]);
-  listsCache = { tasks, shop, watch, gifts };
+  listsCache = { tasks, work, shop, watch, gifts };
   lRender('tasks');
 }
 
 function lTab(name, btn) {
   document.querySelectorAll('#seg-lists .seg-btn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  ['tasks','shopping','watch','gifts'].forEach(n => {
+  ['tasks','work','shopping','watch','gifts'].forEach(n => {
     document.getElementById('lt-' + n).style.display = n === name ? '' : 'none';
   });
   lRender(name);
@@ -1430,9 +1432,50 @@ function lTab(name, btn) {
 
 function lRender(name) {
   if (name === 'tasks')    renderTasks();
+  if (name === 'work')     renderWorkTasks();
   if (name === 'shopping') renderShopping();
   if (name === 'watch')    renderWatch();
   if (name === 'gifts')    renderGifts();
+}
+
+function renderWorkTasks() {
+  const data    = listsCache.work || {};
+  const primary = data.primary || [];
+  const reserve = data.reserve || [];
+
+  let html = '<div class="flow">';
+
+  if (primary.length) {
+    html += '<div class="card"><div class="card-top"><span class="card-eyebrow">В работе</span></div><div class="card-body" style="padding-top:0">';
+    primary.forEach(t => {
+      html += `<div class="row">
+        <div>
+          <div class="row-name">${t.title}</div>
+          <div style="font-size:11px;color:var(--ink3);margin-top:2px">${t.project || ''}${t.status ? ' · ' + t.status : ''}</div>
+        </div>
+        ${t.link ? `<a href="${t.link}" target="_blank" style="color:var(--slate);font-size:12px;text-decoration:none;flex-shrink:0">открыть ↗</a>` : ''}
+      </div>`;
+    });
+    html += '</div></div>';
+  }
+
+  if (reserve.length) {
+    html += '<div class="card"><div class="card-top"><span class="card-eyebrow">Отложено</span></div><div class="card-body" style="padding-top:0">';
+    reserve.forEach(t => {
+      html += `<div class="row" style="opacity:.55">
+        <div class="row-name">${t.title}</div>
+        ${t.link ? `<a href="${t.link}" target="_blank" style="color:var(--slate);font-size:12px;text-decoration:none">открыть ↗</a>` : ''}
+      </div>`;
+    });
+    html += '</div></div>';
+  }
+
+  if (!primary.length && !reserve.length) {
+    html += '<div class="empty">Активных рабочих задач нет</div>';
+  }
+
+  html += '</div>';
+  document.getElementById('lt-work').innerHTML = html;
 }
 
 function renderTasks() {
