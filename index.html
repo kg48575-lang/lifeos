@@ -806,19 +806,24 @@ oninput="if(this.value.length===6) verifyCode()">
 <div id="toast"></div>
 
 <script>
+// Ждём полной загрузки DOM
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.Telegram && window.Telegram.WebApp) {
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand(); // пробуем сразу
 
-if (window.Telegram && window.Telegram.WebApp) {
-  const tg = window.Telegram.WebApp;
-  tg.ready();
-  tg.setHeaderColor('#FAF9F6');
-  tg.setBackgroundColor('#FAF9F6');
-  if (tg.requestFullscreen) {
-    tg.requestFullscreen();          // лучший вариант
-  } else {
-    tg.expand();
-    document.addEventListener('click', () => tg.expand(), { once: true });
+    // Иногда expand срабатывает не сразу, поэтому попробуем через небольшую задержку
+    setTimeout(function() {
+      tg.expand();
+    }, 50);
+
+    // И ещё раз при первом касании экрана (на всякий случай)
+    document.addEventListener('touchstart', function() {
+      tg.expand();
+    }, { once: true });
   }
-}
+});
 // ════════════════════════════════════════════════════════
 // CONFIG
 // ════════════════════════════════════════════════════════
