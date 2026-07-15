@@ -628,6 +628,8 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 </head>
 <body>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
 <!-- ─── AUTH ──────────────────────────────────────────────── -->
 
 <div id="auth">
@@ -804,6 +806,11 @@ oninput="if(this.value.length===6) verifyCode()">
 <div id="toast"></div>
 
 <script>
+
+if (window.Telegram && window.Telegram.WebApp) {
+  window.Telegram.WebApp.ready();
+  window.Telegram.WebApp.expand();
+}
 // ════════════════════════════════════════════════════════
 // CONFIG
 // ════════════════════════════════════════════════════════
@@ -2104,10 +2111,6 @@ function showToast(text) {
 // ════════════════════════════════════════════════════════
 checkAuth();
 </script>
-
-<script src="https://telegram.org/js/telegram-web-app.js">
-  
-</script>
-  
+ 
 </body>
 </html>
