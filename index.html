@@ -377,6 +377,50 @@ html, body {
 /* ─── MARGO CHAT ─────────────────────────────────────────── */
 .chat-area { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
 
+/* ─── MARGO FAB + PANEL ──────────────────────────────────── */
+.margo-fab {
+  position: fixed; right: 18px;
+  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 18px);
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--ink); color: var(--cream);
+  border: none; cursor: pointer; z-index: 60;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(28,26,23,0.22);
+}
+.margo-fab svg { width: 24px; height: 24px; }
+
+.margo-backdrop {
+  position: fixed; inset: 0; z-index: 90;
+  background: rgba(28,26,23,0.35);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.margo-backdrop.open { opacity: 1; pointer-events: auto; }
+
+.margo-panel {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 91;
+  height: 78dvh;
+  background: var(--cream);
+  border-radius: 24px 24px 0 0;
+  display: flex; flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(.32,.72,0,1);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.margo-panel.open { transform: translateY(0); }
+
+.margo-panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 8px;
+}
+.margo-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: none; background: var(--cream2); color: var(--ink2);
+  font-size: 14px; cursor: pointer;
+}
+.margo-panel .chat-area { flex: 1; overflow-y: auto; }
+
 .bubble {
   padding: 10px 14px; border-radius: 14px;
   font-size: 14px; line-height: 1.5; max-width: 84%;
@@ -546,10 +590,7 @@ select.form-field { appearance: none; -webkit-appearance: none; }
   position: absolute; top: 107px; left: 107px;
   width: 66px; height: 66px; border-radius: 18px;
   display: flex; align-items: center; justify-content: center;
-}
-.ao-chip::after {
-  content: ''; width: 22px; height: 3px; border-radius: 2px;
-  background: rgba(28,26,23,0.18);
+  font-size: 30px;
 }
 .ao-chip.c1 { background: var(--sage-soft);     animation: aot1 3s ease-out 1; }
 .ao-chip.c2 { background: var(--blush-soft);    animation: aot2 3s ease-out 1 .04s; }
@@ -572,10 +613,7 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 .bload-chip {
   position: absolute; left: 10px; width: 50px; height: 50px;
   border-radius: 12px; display: flex; align-items: center; justify-content: center;
-}
-.bload-chip::after {
-  content: ''; width: 18px; height: 3px; border-radius: 2px;
-  background: rgba(28,26,23,0.18);
+  font-size: 24px;
 }
 .bload-chip.b1 { top: 3px;   background: var(--slate-soft);    animation: bl1 3.6s ease-out infinite; }
 .bload-chip.b2 { top: 73px;  background: var(--lavender-soft); animation: bl2 3.6s ease-out infinite .12s; }
@@ -611,11 +649,11 @@ oninput="if(this.value.length===6) verifyCode()">
 
 <div id="app-open">
   <div class="ao-wrap">
-    <div class="ao-chip c1"></div>
-    <div class="ao-chip c2"></div>
-    <div class="ao-chip c3"></div>
-    <div class="ao-chip c4"></div>
-    <div class="ao-chip c5"></div>
+    <div class="ao-chip c1">🌿</div>
+    <div class="ao-chip c2">🌙</div>
+    <div class="ao-chip c3">🪶</div>
+    <div class="ao-chip c4">📅</div>
+    <div class="ao-chip c5">✨</div>
   </div>
 </div>  
 
@@ -637,9 +675,9 @@ oninput="if(this.value.length===6) verifyCode()">
     <div class="bload-bar" style="top:0"></div>
     <div class="bload-bar" style="top:70px"></div>
     <div class="bload-bar" style="top:140px"></div>
-    <div class="bload-chip b1"></div>
-    <div class="bload-chip b2"></div>
-    <div class="bload-chip b3"></div>
+    <div class="bload-chip b1">📅</div>
+    <div class="bload-chip b2">✨</div>
+    <div class="bload-chip b3">🌿</div>
   </div>
 </div>
     </div>
@@ -676,9 +714,9 @@ oninput="if(this.value.length===6) verifyCode()">
     <div class="bload-bar" style="top:0"></div>
     <div class="bload-bar" style="top:70px"></div>
     <div class="bload-bar" style="top:140px"></div>
-    <div class="bload-chip b1"></div>
-    <div class="bload-chip b2"></div>
-    <div class="bload-chip b3"></div>
+    <div class="bload-chip b1">📅</div>
+    <div class="bload-chip b2">✨</div>
+    <div class="bload-chip b3">🌿</div>
   </div>
 </div>
     </div>
@@ -705,10 +743,15 @@ oninput="if(this.value.length===6) verifyCode()">
 </div>
 
 <!-- MARGO -->
-<div class="screen" id="s-margo" style="display:flex;flex-direction:column;height:100%">
-  <div class="page-top">
-    <div class="page-label">ассистент</div>
-    <div class="page-title">Марго</div>
+<button class="margo-fab" onclick="openMargoPanel()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+</button>
+
+<div class="margo-backdrop" id="margo-backdrop" onclick="closeMargoPanel()"></div>
+<div class="margo-panel" id="margo-panel">
+  <div class="margo-panel-head">
+    <span class="page-label" style="margin:0">ассистент</span>
+    <button class="margo-close" onclick="closeMargoPanel()">✕</button>
   </div>
   <div class="qa-grid" id="qa-grid"></div>
   <div class="chat-area" id="chat-area"></div>
@@ -746,11 +789,8 @@ oninput="if(this.value.length===6) verifyCode()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
       Списки
     </button>
-    <button class="tab" id="tab-margo" onclick="goTab('margo')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      Марго
-    </button>
   </nav>
+</div>
 </div>
 
 <!-- MODAL -->
@@ -843,8 +883,18 @@ function goTab(name) {
     if (name === 'health')   loadHealth();
     if (name === 'workouts') loadWorkouts();
     if (name === 'lists')    loadLists();
-    if (name === 'margo')    initMargo();
   }
+}
+
+let margoInited = false;
+function openMargoPanel() {
+  document.getElementById('margo-panel').classList.add('open');
+  document.getElementById('margo-backdrop').classList.add('open');
+  if (!margoInited) { margoInited = true; initMargo(); }
+}
+function closeMargoPanel() {
+  document.getElementById('margo-panel').classList.remove('open');
+  document.getElementById('margo-backdrop').classList.remove('open');
 }
 
 // ════════════════════════════════════════════════════════
@@ -874,9 +924,9 @@ function showBload(containerId) {
       <div class="bload-bar" style="top:0"></div>
       <div class="bload-bar" style="top:70px"></div>
       <div class="bload-bar" style="top:140px"></div>
-      <div class="bload-chip b1"></div>
-      <div class="bload-chip b2"></div>
-      <div class="bload-chip b3"></div>
+      <div class="bload-chip b1">📅</div>
+      <div class="bload-chip b2">✨</div>
+      <div class="bload-chip b3">🌿</div>
     </div>`;
 }
   
@@ -1385,7 +1435,7 @@ function templateExerciseRow(i) {
     <input class="form-field" id="nt-ex-name-${i}" type="text" placeholder="Название упражнения" style="margin-bottom:6px">
     <div class="form-3col">
       <input class="form-field" type="number" placeholder="подх." id="nt-ex-sets-${i}" style="text-align:center">
-      <input class="form-field" type="number" placeholder="повт." id="nt-ex-reps-${i}" style="text-align:center">
+      <input class="form-field" type="text" placeholder="повт. или время (40 сек)" id="nt-ex-reps-${i}" style="text-align:center">
       <input class="form-field" type="number" placeholder="кг" id="nt-ex-weight-${i}" style="text-align:center">
     </div>
   </div>`;
@@ -1460,7 +1510,7 @@ function startWorkout(enc) {
       <label class="form-lbl">${ex.name}</label>
       <div class="form-3col">
         <input class="form-field" type="number" placeholder="подх." value="${ex.defaultSets}" id="s${i}" style="text-align:center">
-        <input class="form-field" type="number" placeholder="повт." value="${ex.defaultReps}" id="r${i}" style="text-align:center">
+        <input class="form-field" type="text" placeholder="повт. или время" value="${ex.defaultReps}" id="r${i}" style="text-align:center">
         <input class="form-field" type="number" placeholder="кг" value="${ex.defaultWeight||''}" id="w${i}" style="text-align:center">
       </div>
     </div>`).join('');
@@ -1511,7 +1561,7 @@ function startWorkout(enc) {
           <label class="form-lbl">${ex.name}</label>
           <div class="form-3col">
             <input class="form-field" type="number" placeholder="подх." value="${ex.defaultSets}" id="ex${exCounter}-s" style="text-align:center">
-            <input class="form-field" type="number" placeholder="повт." value="${ex.defaultReps}" id="ex${exCounter}-r" style="text-align:center">
+            <input class="form-field" type="text" placeholder="повт. или время" value="${ex.defaultReps}" id="ex${exCounter}-r" style="text-align:center">
             <input class="form-field" type="number" placeholder="кг" value="${ex.defaultWeight||''}" id="ex${exCounter}-w" style="text-align:center">
           </div>
         </div>`;
