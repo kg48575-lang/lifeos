@@ -808,8 +808,16 @@ oninput="if(this.value.length===6) verifyCode()">
 <script>
 
 if (window.Telegram && window.Telegram.WebApp) {
-  window.Telegram.WebApp.ready();
-  window.Telegram.WebApp.expand();
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.setHeaderColor('#FAF9F6');
+  tg.setBackgroundColor('#FAF9F6');
+  if (tg.requestFullscreen) {
+    tg.requestFullscreen();          // лучший вариант
+  } else {
+    tg.expand();
+    document.addEventListener('click', () => tg.expand(), { once: true });
+  }
 }
 // ════════════════════════════════════════════════════════
 // CONFIG
