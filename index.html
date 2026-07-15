@@ -865,7 +865,16 @@ function showApp() {
   setTimeout(() => {
     anim.classList.remove('show');
     document.getElementById('app').classList.remove('gone');
-  }, 3100);
+    // Принудительно разворачиваем после появления интерфейса
+    if (window.Telegram && window.Telegram.WebApp) {
+      const tg = window.Telegram.WebApp;
+      if (tg.requestFullscreen) {
+        tg.requestFullscreen();
+      } else {
+        tg.expand();
+      }
+    }
+  }, 3200); // сразу после завершения анимации (3100 + небольшой запас)
 }
 
 // ════════════════════════════════════════════════════════
