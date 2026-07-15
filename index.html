@@ -546,7 +546,10 @@ select.form-field { appearance: none; -webkit-appearance: none; }
   position: absolute; top: 107px; left: 107px;
   width: 66px; height: 66px; border-radius: 18px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 30px;
+}
+.ao-chip::after {
+  content: ''; width: 22px; height: 3px; border-radius: 2px;
+  background: rgba(28,26,23,0.18);
 }
 .ao-chip.c1 { background: var(--sage-soft);     animation: aot1 3s ease-out 1; }
 .ao-chip.c2 { background: var(--blush-soft);    animation: aot2 3s ease-out 1 .04s; }
@@ -569,7 +572,10 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 .bload-chip {
   position: absolute; left: 10px; width: 50px; height: 50px;
   border-radius: 12px; display: flex; align-items: center; justify-content: center;
-  font-size: 24px;
+}
+.bload-chip::after {
+  content: ''; width: 18px; height: 3px; border-radius: 2px;
+  background: rgba(28,26,23,0.18);
 }
 .bload-chip.b1 { top: 3px;   background: var(--slate-soft);    animation: bl1 3.6s ease-out infinite; }
 .bload-chip.b2 { top: 73px;  background: var(--lavender-soft); animation: bl2 3.6s ease-out infinite .12s; }
@@ -605,11 +611,11 @@ oninput="if(this.value.length===6) verifyCode()">
 
 <div id="app-open">
   <div class="ao-wrap">
-    <div class="ao-chip c1">🌿</div>
-    <div class="ao-chip c2">🌙</div>
-    <div class="ao-chip c3">🪶</div>
-    <div class="ao-chip c4">📅</div>
-    <div class="ao-chip c5">✨</div>
+    <div class="ao-chip c1"></div>
+    <div class="ao-chip c2"></div>
+    <div class="ao-chip c3"></div>
+    <div class="ao-chip c4"></div>
+    <div class="ao-chip c5"></div>
   </div>
 </div>  
 
@@ -631,9 +637,9 @@ oninput="if(this.value.length===6) verifyCode()">
     <div class="bload-bar" style="top:0"></div>
     <div class="bload-bar" style="top:70px"></div>
     <div class="bload-bar" style="top:140px"></div>
-    <div class="bload-chip b1">📅</div>
-    <div class="bload-chip b2">✨</div>
-    <div class="bload-chip b3">🌿</div>
+    <div class="bload-chip b1"></div>
+    <div class="bload-chip b2"></div>
+    <div class="bload-chip b3"></div>
   </div>
 </div>
     </div>
@@ -670,9 +676,9 @@ oninput="if(this.value.length===6) verifyCode()">
     <div class="bload-bar" style="top:0"></div>
     <div class="bload-bar" style="top:70px"></div>
     <div class="bload-bar" style="top:140px"></div>
-    <div class="bload-chip b1">📅</div>
-    <div class="bload-chip b2">✨</div>
-    <div class="bload-chip b3">🌿</div>
+    <div class="bload-chip b1"></div>
+    <div class="bload-chip b2"></div>
+    <div class="bload-chip b3"></div>
   </div>
 </div>
     </div>
@@ -868,9 +874,9 @@ function showBload(containerId) {
       <div class="bload-bar" style="top:0"></div>
       <div class="bload-bar" style="top:70px"></div>
       <div class="bload-bar" style="top:140px"></div>
-      <div class="bload-chip b1">📅</div>
-      <div class="bload-chip b2">✨</div>
-      <div class="bload-chip b3">🌿</div>
+      <div class="bload-chip b1"></div>
+      <div class="bload-chip b2"></div>
+      <div class="bload-chip b3"></div>
     </div>`;
 }
   
@@ -1252,22 +1258,45 @@ function renderSupps(d) {
     document.getElementById('ht-supps').innerHTML = '<div class="empty">БАДов нет</div>';
     return;
   }
-  let html = '<div class="flow"><div class="card"><div class="card-body" style="padding-top:14px">';
-  supps.forEach(s => {
-    const warn = s.daysLeft !== null && s.daysLeft <= 7;
-    const ds   = s.daysLeft === null ? 'без срока' : s.daysLeft <= 0 ? '⚠ курс завершён' : `осталось ${s.daysLeft} дн.`;
-    html += `<div class="row">
-      <div>
+
+  const active   = supps.filter(s => String(s.status || '').toLowerCase() !== 'завершён');
+  const finished = supps.filter(s => String(s.status || '').toLowerCase() === 'завершён');
+
+  let html = '<div class="flow">';
+
+  html += '<div class="card"><div class="card-body" style="padding-top:14px">';
+  if (active.length) {
+    active.forEach(s => {
+      const warn = s.daysLeft !== null && s.daysLeft <= 7;
+      const ds   = s.daysLeft === null ? 'без срока' : s.daysLeft <= 0 ? '⚠ курс завершён' : `осталось ${s.daysLeft} дн.`;
+      html += `<div class="row">
+        <div>
+          <div class="row-name">${s.name}</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:1px">с ${s.startDate}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="row-meta ${warn ? 'row-warn' : ''}">${ds}</div>
+          <button onclick="completeSuppUI('${esc(s.name)}',this)" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--ink3);cursor:pointer;font-family:var(--font)">Завершить</button>
+        </div>
+      </div>`;
+    });
+  } else {
+    html += '<div class="empty" style="padding:8px 0">Активных БАДов нет</div>';
+  }
+  html += '</div></div>';
+
+  if (finished.length) {
+    html += '<div class="card"><div class="card-top"><span class="card-eyebrow">История</span></div><div class="card-body" style="padding-top:0">';
+    finished.forEach(s => {
+      html += `<div class="row" style="opacity:.5">
         <div class="row-name">${s.name}</div>
-        <div style="font-size:12px;color:var(--ink3);margin-top:1px">с ${s.startDate}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="row-meta ${warn ? 'row-warn' : ''}">${ds}</div>
-        <button onclick="completeSuppUI('${esc(s.name)}',this)" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--ink3);cursor:pointer;font-family:var(--font)">Завершить</button>
-      </div>
-    </div>`;
-  });
-  html += '</div></div></div>';
+        <div class="row-meta">${s.startDate} — ${s.endDate || '?'}</div>
+      </div>`;
+    });
+    html += '</div></div>';
+  }
+
+  html += '</div>';
   document.getElementById('ht-supps').innerHTML = html;
 }
 
