@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -379,6 +380,7 @@ html, body {
 .bubble {
   padding: 10px 14px; border-radius: 14px;
   font-size: 14px; line-height: 1.5; max-width: 84%;
+  white-space: pre-line;
 }
 .bubble-me    { background: var(--ink); color: var(--cream); align-self: flex-end; border-bottom-right-radius: 4px; }
 .bubble-margo { background: var(--white); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 4px; }
@@ -515,50 +517,6 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 .skeleton-line.w-80 { width: 80%; }
 .skeleton-line.w-90 { width: 90%; }
 
-/* ─── MARGO FAB + PANEL ──────────────────────────────────── */
-.margo-fab {
-  position: fixed; right: 18px;
-  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 18px);
-  width: 52px; height: 52px; border-radius: 50%;
-  background: var(--ink); color: var(--cream);
-  border: none; cursor: pointer; z-index: 60;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 16px rgba(28,26,23,0.22);
-}
-.margo-fab svg { width: 24px; height: 24px; }
-
-.margo-backdrop {
-  position: fixed; inset: 0; z-index: 90;
-  background: rgba(28,26,23,0.35);
-  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-.margo-backdrop.open { opacity: 1; pointer-events: auto; }
-
-.margo-panel {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 91;
-  height: 78dvh;
-  background: var(--cream);
-  border-radius: 24px 24px 0 0;
-  display: flex; flex-direction: column;
-  transform: translateY(100%);
-  transition: transform 0.3s cubic-bezier(.32,.72,0,1);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-.margo-panel.open { transform: translateY(0); }
-
-.margo-panel-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px 8px;
-}
-.margo-close {
-  width: 30px; height: 30px; border-radius: 50%;
-  border: none; background: var(--cream2); color: var(--ink2);
-  font-size: 14px; cursor: pointer;
-}
-.margo-panel .chat-area { flex: 1; overflow-y: auto; }
-  
 /* ─── TOAST ──────────────────────────────────────────────── */
 #toast {
   position: fixed; left: 50%; bottom: calc(var(--tab-h) + 24px);
@@ -622,21 +580,23 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 @keyframes bl3{0%,10%{transform:translate(200px,30px) rotate(20deg);opacity:0}42%,68%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(200px,30px) rotate(20deg);opacity:0}}
   
 </style>
+
 </head>
 <body>
 
 <!-- ─── AUTH ──────────────────────────────────────────────── -->
+
 <div id="auth">
   <div class="auth-wordmark">Life OS</div>
   <div class="auth-title">Привет</div>
   <div class="auth-divider"></div>
   <div class="auth-body">Нажми кнопку — Марго пришлёт код в Telegram</div>
 
-  <button class="btn btn-ghost" id="req-btn" onclick="requestCode()">Получить код</button>
+<button class="btn btn-ghost" id="req-btn" onclick="requestCode()">Получить код</button>
 
-  <input class="field code-field" id="code-inp" type="number"
-    placeholder="000000" maxlength="6" style="display:none"
-    oninput="if(this.value.length===6) verifyCode()">
+<input class="field code-field" id="code-inp" type="number"
+placeholder="000000" maxlength="6" style="display:none"
+oninput="if(this.value.length===6) verifyCode()">
 
   <div class="auth-err" id="auth-err">Неверный или истёкший код</div>
 </div>
@@ -652,18 +612,21 @@ select.form-field { appearance: none; -webkit-appearance: none; }
     <div class="ao-chip c5">✨</div>
   </div>
 </div>  
-  
+
 <div id="app" class="gone">
 
   <div class="scroll-area" id="scroll">
 
-    <!-- HOME -->
-    <div class="screen on" id="s-home">
-      <div class="page-top">
-        <div class="page-label" id="h-label">сегодня</div>
-        <div class="page-title" id="h-title">—</div>
-      </div>
-      <div class="flow" id="home-flow">
+```
+<!-- HOME -->
+<div class="screen on" id="s-home">
+  <div class="page-top">
+    <div class="page-label" id="h-label">сегодня</div>
+    <div class="page-title" id="h-title">—</div>
+  </div>
+  <div class="flow" id="home-flow">
+```
+
   <div class="bload">
     <div class="bload-bar" style="top:0"></div>
     <div class="bload-bar" style="top:70px"></div>
@@ -675,29 +638,34 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 </div>
     </div>
 
-    <!-- HEALTH -->
-    <div class="screen" id="s-health">
-      <div class="page-top">
-        <div class="page-label">данные</div>
-        <div class="page-title">Здоровье</div>
-      </div>
-      <div class="seg" id="seg-health">
-        <button class="seg-btn on" onclick="hTab('metrics',this)">Показатели</button>
-        <button class="seg-btn"    onclick="hTab('mood',this)">Состояние</button>
-        <button class="seg-btn"    onclick="hTab('supps',this)">БАДы</button>
-      </div>
-      <div id="ht-metrics"></div>
-      <div id="ht-mood"    style="display:none"></div>
-      <div id="ht-supps"   style="display:none"></div>
-    </div>
+```
+<!-- HEALTH -->
+<div class="screen" id="s-health">
+  <div class="page-top">
+    <div class="page-label">данные</div>
+    <div class="page-title">Здоровье</div>
+  </div>
+  <div class="seg" id="seg-health">
+    <button class="seg-btn on" onclick="hTab('metrics',this)">Показатели</button>
+    <button class="seg-btn"    onclick="hTab('mood',this)">Состояние</button>
+    <button class="seg-btn"    onclick="hTab('supps',this)">БАДы</button>
+    <button class="seg-btn"    onclick="hTab('measure',this)">Замеры</button>
+  </div>
+  <div id="ht-metrics"></div>
+  <div id="ht-mood"    style="display:none"></div>
+  <div id="ht-supps"   style="display:none"></div>
+  <div id="ht-measure" style="display:none"></div>
+</div>
 
-    <!-- WORKOUTS -->
-    <div class="screen" id="s-workouts">
-      <div class="page-top">
-        <div class="page-label">активность</div>
-        <div class="page-title">Тренировки</div>
-      </div>
-      <div id="workout-flow">
+<!-- WORKOUTS -->
+<div class="screen" id="s-workouts">
+  <div class="page-top">
+    <div class="page-label">активность</div>
+    <div class="page-title">Тренировки</div>
+  </div>
+  <div id="workout-flow">
+```
+
   <div class="bload">
     <div class="bload-bar" style="top:0"></div>
     <div class="bload-bar" style="top:70px"></div>
@@ -709,52 +677,52 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 </div>
     </div>
 
-    <!-- LISTS -->
-    <div class="screen" id="s-lists">
-      <div class="page-top">
-        <div class="page-label">органайзер</div>
-        <div class="page-title">Списки</div>
-      </div>
-      <div class="seg" id="seg-lists">
-        <button class="seg-btn on" onclick="lTab('tasks',this)">Задачи</button>
-        <button class="seg-btn"    onclick="lTab('shopping',this)">Купить</button>
-        <button class="seg-btn"    onclick="lTab('watch',this)">Смотреть</button>
-        <button class="seg-btn"    onclick="lTab('gifts',this)">Подарки</button>
-      </div>
-      <div id="lt-tasks"></div>
-      <div id="lt-shopping" style="display:none"></div>
-      <div id="lt-watch"    style="display:none"></div>
-      <div id="lt-gifts"    style="display:none"></div>
-    </div>
+```
+<!-- LISTS -->
+<div class="screen" id="s-lists">
+  <div class="page-top">
+    <div class="page-label">органайзер</div>
+    <div class="page-title">Списки</div>
+  </div>
+  <div class="seg" id="seg-lists">
+    <button class="seg-btn on" onclick="lTab('tasks',this)">Задачи</button>
+    <button class="seg-btn"    onclick="lTab('work',this)">Работа</button>
+    <button class="seg-btn"    onclick="lTab('shopping',this)">Купить</button>
+    <button class="seg-btn"    onclick="lTab('watch',this)">Смотреть</button>
+    <button class="seg-btn"    onclick="lTab('gifts',this)">Подарки</button>
+  </div>
+  <div id="lt-tasks"></div>
+  <div id="lt-work"     style="display:none"></div>
+  <div id="lt-shopping" style="display:none"></div>
+  <div id="lt-watch"    style="display:none"></div>
+  <div id="lt-gifts"    style="display:none"></div>
+</div>
 
-    <!-- MARGO -->
-    <button class="margo-fab" onclick="openMargoPanel()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+<!-- MARGO -->
+<div class="screen" id="s-margo" style="display:flex;flex-direction:column;height:100%">
+  <div class="page-top">
+    <div class="page-label">ассистент</div>
+    <div class="page-title">Марго</div>
+  </div>
+  <div class="qa-grid" id="qa-grid"></div>
+  <div class="chat-area" id="chat-area"></div>
+  <div class="chat-input-bar">
+    <textarea class="chat-field" id="chat-inp" rows="1"
+      placeholder="Запиши, спроси, надиктуй…"
+      oninput="autoH(this)" onkeydown="chatKey(event)"></textarea>
+    <button class="send-btn" onclick="chatSend()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+        <path d="M12 19V5M5 12l7-7 7 7"/>
+      </svg>
     </button>
-    
-    <div class="margo-backdrop" id="margo-backdrop" onclick="closeMargoPanel()"></div>
-    <div class="margo-panel" id="margo-panel">
-      <div class="margo-panel-head">
-        <span class="page-label" style="margin:0">ассистент</span>
-        <button class="margo-close" onclick="closeMargoPanel()">✕</button>
-      </div>
-      <div class="qa-grid" id="qa-grid"></div>
-      <div class="chat-area" id="chat-area"></div>
-      <div class="chat-input-bar">
-        <textarea class="chat-field" id="chat-inp" rows="1"
-          placeholder="Запиши, спроси, надиктуй…"
-          oninput="autoH(this)" onkeydown="chatKey(event)"></textarea>
-        <button class="send-btn" onclick="chatSend()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-            <path d="M12 19V5M5 12l7-7 7 7"/>
-          </svg>
-        </button>
-      </div>
-    </div>
+  </div>
+</div>
+```
 
   </div><!-- /scroll -->
 
   <!-- TAB BAR -->
+
   <nav class="tabbar">
     <button class="tab on" id="tab-home" onclick="goTab('home')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
@@ -772,10 +740,15 @@ select.form-field { appearance: none; -webkit-appearance: none; }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
       Списки
     </button>
+    <button class="tab" id="tab-margo" onclick="goTab('margo')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      Марго
+    </button>
   </nav>
 </div>
 
 <!-- MODAL -->
+
 <div class="overlay gone" id="overlay" onclick="overlayClick(event)">
   <div class="modal" id="modal-body">
     <div class="modal-handle"></div>
@@ -864,20 +837,10 @@ function goTab(name) {
     if (name === 'health')   loadHealth();
     if (name === 'workouts') loadWorkouts();
     if (name === 'lists')    loadLists();
+    if (name === 'margo')    initMargo();
   }
 }
 
-let margoInited = false;
-function openMargoPanel() {
-  document.getElementById('margo-panel').classList.add('open');
-  document.getElementById('margo-backdrop').classList.add('open');
-  if (!margoInited) { margoInited = true; initMargo(); }
-}
-function closeMargoPanel() {
-  document.getElementById('margo-panel').classList.remove('open');
-  document.getElementById('margo-backdrop').classList.remove('open');
-}
-  
 // ════════════════════════════════════════════════════════
 // LOAD ALL
 // ════════════════════════════════════════════════════════
@@ -932,17 +895,9 @@ async function loadHome() {
   showBload('home-flow');
   const d = await call({ action: 'dashboard' });
   renderHome(d);
-  loadInsight();
-}
-
-function loadInsight(force) {
-  const el = document.getElementById('home-insight-text');
-  if (el) el.textContent = force ? 'Обновляю…' : (el.textContent || '…');
-  const params = { action: 'home_insight' };
-  if (force) params.force = 1;
-  call(params).then(r => {
-    const el2 = document.getElementById('home-insight-text');
-    if (el2) el2.textContent = r.insight || 'Пока нет данных для наблюдений — заполни данные здоровья.';
+  call({ action: 'home_insight' }).then(r => {
+    const el = document.getElementById('home-insight-text');
+    if (el) el.textContent = r.insight || 'Пока нет данных для наблюдений — заполни данные здоровья.';
   });
 }
 
@@ -956,11 +911,10 @@ function renderHome(d) {
 
   let html = '';
 
-  // ── Инсайт Марго — кликабельно, обновляет наблюдение заново
-  html += `<div class="card insight-card" style="cursor:pointer" onclick="loadInsight(true)">
+  // ── Инсайт Марго (placeholder пока нет AI-вызова на главной)
+ html += `<div class="card insight-card">
     <div class="card-top">
       <span class="card-eyebrow" style="color:var(--lavender)">Что заметила Марго</span>
-      <span style="font-size:11px;color:var(--ink3)">обновить ↻</span>
     </div>
     <div class="card-body">
       <div class="insight-text" id="home-insight-text">…</div>
@@ -1071,14 +1025,16 @@ async function loadHealth() {
   hLoading = true;
   showBload('ht-metrics');
   try {
-    const [hd, sd, bs] = await Promise.all([
+    const [hd, sd, bs, md] = await Promise.all([
       call({ action: 'health' }),
       call({ action: 'supps' }),
-      call({ action: 'body_score_history' })
+      call({ action: 'body_score_history' }),
+      call({ action: 'body_measurements' })
     ]);
     renderMetrics(hd, bs.history);
     renderMood(hd);
     renderSupps(sd);
+    renderMeasurements(md);
     document.getElementById('ht-metrics').insertAdjacentHTML('beforeend', renderBodyScoreChart(bs.history));
   } finally { hLoading = false; }
 }
@@ -1086,12 +1042,81 @@ async function loadHealth() {
 function hTab(name, btn) {
   document.querySelectorAll('#seg-health .seg-btn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  ['metrics','mood','supps'].forEach(n => {
+  ['metrics','mood','supps','measure'].forEach(n => {
     document.getElementById('ht-' + n).style.display = n === name ? '' : 'none';
   });
 }
 
-function renderMetrics(d, history) {
+function renderMeasurements(md) {
+  const list = (md.measurements || []).slice().reverse();
+  let html = '<div class="flow">';
+  html += `<button class="add-btn" onclick="openMeasurementModal()">+ Записать замер</button>`;
+
+  if (!list.length) {
+    html += '<div class="empty">Замеров пока нет — рекомендую раз в 3-4 недели</div>';
+  } else {
+    html += '<div class="card"><div class="card-body" style="padding-top:14px">';
+    list.forEach((m, i) => {
+      const prev = list[i + 1];
+      function d(field) {
+        if (!prev || !m[field] || !prev[field]) return '';
+        const diff = parseFloat(m[field]) - parseFloat(prev[field]);
+        if (isNaN(diff) || Math.abs(diff) < 0.1) return '';
+        return ` <span style="color:var(--ink3)">${diff > 0 ? '↑' : '↓'}${Math.abs(diff).toFixed(1)}</span>`;
+      }
+      html += `<div class="row" style="flex-direction:column;align-items:flex-start;gap:4px;padding:14px 0">
+        <div style="font-size:12px;color:var(--ink3)">${m.date}</div>
+        <div style="font-size:14px;line-height:1.7">
+          Вес ${m.weight || '—'}кг${d('weight')} · Жир ${m.fat || '—'}%${d('fat')} · Мышцы ${m.muscle || '—'}кг${d('muscle')}<br>
+          Грудь ${m.chest || '—'} · Талия ${m.waist || '—'} · Бёдра ${m.hips || '—'} · Плечи ${m.shoulders || '—'}
+        </div>
+      </div>`;
+    });
+    html += '</div></div>';
+  }
+
+  html += '</div>';
+  document.getElementById('ht-measure').innerHTML = html;
+}
+
+function openMeasurementModal() {
+  openModal(`
+    <div class="modal-title">Записать замер</div>
+    <div class="form-group"><label class="form-lbl">Вес (кг)</label><input class="form-field" id="bm-weight" type="number" step="0.1"></div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-lbl">% жира</label><input class="form-field" id="bm-fat" type="number" step="0.1"></div>
+      <div class="form-group"><label class="form-lbl">Мышцы (кг)</label><input class="form-field" id="bm-muscle" type="number" step="0.1"></div>
+    </div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-lbl">Обхват груди</label><input class="form-field" id="bm-chest" type="text" placeholder="93-94 см"></div>
+      <div class="form-group"><label class="form-lbl">Обхват талии</label><input class="form-field" id="bm-waist" type="text" placeholder="84-85 см"></div>
+    </div>
+    <div class="form-2col">
+      <div class="form-group"><label class="form-lbl">Обхват бёдер</label><input class="form-field" id="bm-hips" type="text" placeholder="96 см"></div>
+      <div class="form-group"><label class="form-lbl">Обхват плеч</label><input class="form-field" id="bm-shoulders" type="text" placeholder="100-101 см"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveMeasurement()">Записать</button>
+    </div>`);
+}
+
+async function saveMeasurement() {
+  const btn = document.querySelector('#overlay .modal-btn-primary');
+  if (btn.classList.contains('btn-saving')) return;
+  btn.classList.add('btn-saving'); btn.textContent = 'Записываю…';
+  const r = await call({
+    action: 'add_body_measurement',
+    weight: v('bm-weight'), fat: v('bm-fat'), muscle: v('bm-muscle'),
+    chest: v('bm-chest'), waist: v('bm-waist'), hips: v('bm-hips'), shoulders: v('bm-shoulders')
+  });
+  closeModal();
+  if (r.error) { showToast('Ошибка: ' + r.error); return; }
+  showToast('✓ Замер записан');
+  loaded.delete('health'); if (activeTab==='health') loadHealth();
+}
+
+function renderMetrics(d) {
   const btns = `<div class="qa-grid" style="padding:0 16px 12px">
     <button class="qa-btn" onclick="openDailyHealthModal()"><span class="qa-icon">📅</span>Данные за день</button>
     <button class="qa-btn" onclick="openWeeklyHealthModal()"><span class="qa-icon">📆</span>Данные за неделю</button>
@@ -1104,38 +1129,19 @@ function renderMetrics(d, history) {
   const l = d.latest;
   const sleep = (l.deepSleep && l.lightSleep && l.remSleep)
     ? ((+l.deepSleep + +l.lightSleep + +l.remSleep)/60).toFixed(1) : '—';
-  
-  const prev = history && history.length >= 2 ? history[history.length - 2] : null;
-  const delta = k => prev && l[k] != null ? (parseFloat(l[k]) - parseFloat(prev[k])) : null
-  
+
   document.getElementById('ht-metrics').innerHTML = btns + `
     <div class="metric-grid">
-      ${mCell('Вес', r1(l.weight), 'кг', 'var(--blush)', delta('weight'))}
-      ${mCell('% жира', r1(l.fat), '%', 'var(--blush)', delta('fat'))}
-      ${mCell('Мышцы', r1(l.muscle), 'кг', 'var(--sage)', delta('muscle'))}
+      ${mCell('Вес', r1(l.weight), 'кг', 'var(--blush)')}
+      ${mCell('% жира', r1(l.fat), '%', 'var(--blush)')}
+      ${mCell('Мышцы', r1(l.muscle), 'кг', 'var(--sage)')}
       ${mCell('Шаги', l.steps ? Math.round(l.steps).toLocaleString('ru') : '—', '/день', 'var(--slate)')}
-      ${mCell('% воды', r1(l.water), '%', 'var(--lavender)', delta('water'))}
+      ${mCell('% воды', r1(l.water), '%', 'var(--lavender)')}
       ${mCell('Энергия', r1(l.energy), '/ 5', 'var(--sand)')}
     </div>
     <button class="add-btn" onclick="openMoodModal()">+ Записать состояние</button>`;
 }
 
-function scoreBreakdown(history) {
-  if (!history || history.length < 2) return '';
-  const a = history[history.length - 2], b = history[history.length - 1];
-  const dScore = b.score - a.score;
-  if (Math.abs(dScore) < 0.3) return 'Индекс почти не изменился с прошлой записи.';
-
-  const parts = [
-    { label: 'изменения % жира',   val: ((100-b.fat) - (100-a.fat)) * 0.4 },
-    { label: 'изменения доли мышц', val: ((b.muscle/b.weight*100) - (a.muscle/a.weight*100)) * 0.4 },
-    { label: 'изменения % воды',    val: ((b.water/60*100) - (a.water/60*100)) * 0.2 }
-  ].sort((x,y) => Math.abs(y.val) - Math.abs(x.val));
-
-  const dir = dScore > 0 ? 'вырос' : 'снизился';
-  return `Индекс ${dir} на ${Math.abs(dScore).toFixed(1)} — в основном за счёт ${parts[0].label}.`;
-}
-  
 function renderBodyScoreChart(history) {
   if (!history || history.length < 2) return '';
   const w = 280, h = 80, pad = 8;
@@ -1161,20 +1167,14 @@ function renderBodyScoreChart(history) {
       <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:${h}px">
         <polyline points="${points}" fill="none" stroke="var(--lavender)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-        <div style="font-size:12px;color:var(--ink3);margin-top:8px;line-height:1.5">${scoreBreakdown(history)}
-      </div>
     </div>
   </div>`;
 }
         
-function mCell(label, val, unit, color, delta) {
-  let arrow = '';
-  if (delta !== null && delta !== undefined && Math.abs(delta) >= 0.1) {
-    arrow = `<span style="color:var(--ink3);font-size:11px;margin-left:4px">${delta > 0 ? '↑' : '↓'}</span>`;
-  }
+function mCell(label, val, unit, color) {
   return `<div class="metric-cell">
     <div class="metric-label">${label}</div>
-    <div class="metric-value" style="color:${color}">${val || '—'}${arrow}</div>
+    <div class="metric-value" style="color:${color}">${val || '—'}</div>
     <div class="metric-unit">${unit}</div>
   </div>`;
 }
@@ -1301,7 +1301,9 @@ function renderWorkouts(wd, td) {
   templates.forEach(t => {
     html += `<button class="chip" onclick="startWorkout(${encodeData(t)})">${t.name}</button>`;
   });
-  html += `</div></div>`;
+  html += `</div>
+    <button class="add-btn" onclick="openAddTemplateModal()">+ Создать свой шаблон</button>
+  </div>`;
 
   // История
   if (workouts.length) {
@@ -1327,18 +1329,72 @@ function renderWorkouts(wd, td) {
   document.getElementById('workout-flow').innerHTML = html;
 }
 
+let newTemplateExCount = 0;
+
+function openAddTemplateModal() {
+  newTemplateExCount = 1;
+  openModal(`
+    <div class="modal-title">Новый шаблон</div>
+    <div class="form-group">
+      <label class="form-lbl">Название</label>
+      <input class="form-field" id="nt-name" type="text" placeholder="Ноги">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Группы мышц</label>
+      <input class="form-field" id="nt-groups" type="text" placeholder="квадрицепс, ягодицы">
+    </div>
+    <div id="nt-exercises">${templateExerciseRow(0)}</div>
+    <button class="add-btn" onclick="addTemplateExerciseRow()">+ Ещё упражнение</button>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveNewTemplate()">Сохранить шаблон</button>
+    </div>`);
+}
+
+function templateExerciseRow(i) {
+  return `<div class="form-group" id="nt-row-${i}">
+    <input class="form-field" id="nt-ex-name-${i}" type="text" placeholder="Название упражнения" style="margin-bottom:6px">
+    <div class="form-3col">
+      <input class="form-field" type="number" placeholder="подх." id="nt-ex-sets-${i}" style="text-align:center">
+      <input class="form-field" type="number" placeholder="повт." id="nt-ex-reps-${i}" style="text-align:center">
+      <input class="form-field" type="number" placeholder="кг" id="nt-ex-weight-${i}" style="text-align:center">
+    </div>
+  </div>`;
+}
+
+function addTemplateExerciseRow() {
+  document.getElementById('nt-exercises').insertAdjacentHTML('beforeend', templateExerciseRow(newTemplateExCount));
+  newTemplateExCount++;
+}
+
+async function saveNewTemplate() {
+  const name = v('nt-name'); if (!name) return;
+  const exercises = [];
+  for (let i = 0; i < newTemplateExCount; i++) {
+    const exName = v('nt-ex-name-' + i);
+    if (!exName) continue;
+    exercises.push({ name: exName, sets: v('nt-ex-sets-'+i), reps: v('nt-ex-reps-'+i), weight: v('nt-ex-weight-'+i) });
+  }
+  if (!exercises.length) { showToast('Добавь хотя бы одно упражнение'); return; }
+
+  const btn = document.querySelector('#overlay .modal-btn-primary');
+  btn.classList.add('btn-saving'); btn.textContent = 'Сохраняю…';
+  const r = await call({ action:'add_workout_template', name, muscleGroups:v('nt-groups'), exercises: JSON.stringify(exercises) });
+  closeModal();
+  if (r.error) { showToast('Ошибка: ' + r.error); return; }
+  showToast('✓ Шаблон создан');
+  loaded.delete('workouts'); loadWorkouts();
+}
+
 function viewWorkoutDetail(idx) {
   const w = window._workoutsCache[idx];
   if (!w) return;
 
-  var exList = [];
-  try { exList = JSON.parse(w.exercises || '[]'); } catch(e) { exList = []; }
-
   let exHtml = '';
-  if (exList.length) {
-    exHtml = exList.map((ex, i) => `
+  if (w.exercises && w.exercises.length) {
+    exHtml = w.exercises.map(ex => `
       <div class="ex-row">
-        <div class="ex-name">Упражнение ${i + 1}</div>
+        <div class="ex-name">${ex.name || 'Упражнение'}</div>
         <div class="ex-sets">${ex.sets || '—'}×${ex.reps || '—'}${ex.weight ? ' × ' + ex.weight + ' кг' : ''}</div>
       </div>`).join('');
   } else {
@@ -1393,13 +1449,14 @@ function startWorkout(enc) {
     </div>
     <div class="modal-footer">
       <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
-      <button class="modal-btn modal-btn-primary" onclick="saveWorkout('${t.name}',${t.exercises.length})">Сохранить</button>
+      <button class="modal-btn modal-btn-primary" onclick='saveWorkout("${t.name}",${t.exercises.length},${JSON.stringify(t.exercises.map(e=>e.name))})'>Сохранить</button>
     </div>`);
 }
 
   function startStagedWorkout(t) {
   let html = `<div class="modal-title">${t.name}</div>`;
   let exCounter = 0;
+  let exNames = [];
 
   t.stages.forEach((stage, si) => {
     html += `<div style="font-size:13px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:0.06em;margin:${si>0?'20px':'0'} 0 10px">${stage.title}</div>`;
@@ -1420,6 +1477,7 @@ function startWorkout(enc) {
 
     if (stage.type === 'strength') {
       stage.exercises.forEach(ex => {
+        exNames.push(ex.name);
         html += `<div class="form-group">
           <label class="form-lbl">${ex.name}</label>
           <div class="form-3col">
@@ -1443,20 +1501,20 @@ function startWorkout(enc) {
   </div>
   <div class="modal-footer">
     <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
-    <button class="modal-btn modal-btn-primary" onclick="saveStagedWorkout('${t.name}',${exCounter})">Сохранить</button>
+    <button class="modal-btn modal-btn-primary" onclick='saveStagedWorkout("${t.name}",${exCounter},${JSON.stringify(exNames)})'>Сохранить</button>
   </div>`;
 
   openModal(html);
 }
 
-async function saveStagedWorkout(name, exCount) {
+async function saveStagedWorkout(name, exCount, exNames) {
   const btn = document.querySelector('#overlay .modal-btn-primary');
   if (btn.classList.contains('btn-saving')) return;
   btn.classList.add('btn-saving'); btn.textContent = 'Сохраняю…';
 
   const exercises = [];
   for (let i = 0; i < exCount; i++) {
-    exercises.push({ sets: v('ex'+i+'-s'), reps: v('ex'+i+'-r'), weight: v('ex'+i+'-w') });
+    exercises.push({ name: exNames[i], sets: v('ex'+i+'-s'), reps: v('ex'+i+'-r'), weight: v('ex'+i+'-w') });
   }
 
   await call({ action:'add_workout', type:name, duration:v('wdur'), exercises:JSON.stringify(exercises), note:v('wnote') });
@@ -1466,13 +1524,13 @@ async function saveStagedWorkout(name, exCount) {
 }
 
 
-async function saveWorkout(name, cnt) {
+async function saveWorkout(name, cnt, exNames) {
   const btn = document.querySelector('#overlay .modal-btn-primary');
   if (btn.classList.contains('btn-saving')) return;
   btn.classList.add('btn-saving'); btn.textContent = 'Сохраняю…';
   const exercises = [];
   for (let i = 0; i < cnt; i++) {
-    exercises.push({ sets: v('s'+i), reps: v('r'+i), weight: v('w'+i) });
+    exercises.push({ name: exNames[i], sets: v('s'+i), reps: v('r'+i), weight: v('w'+i) });
   }
   await call({ action:'add_workout', type:name, duration:v('wdur'), exercises:JSON.stringify(exercises), note:v('wnote') });
   closeModal();
@@ -1649,20 +1707,21 @@ function renderGifts() {
 // ════════════════════════════════════════════════════════
 function initMargo() {
   const cmds = [
-    { icon:'📅', label:'Расписание',     action:() => sendCmd('расписание') },
-    { icon:'🔍', label:'Найти окно',      action:() => sendCmd('найди окно для встречи') },
-    { icon:'💪', label:'Тренировка',      action:() => { closeMargoPanel(); goTab('workouts'); } },
-    { icon:'❤️', label:'Здоровье',        action:() => { closeMargoPanel(); goTab('health'); } },
-    { icon:'📋', label:'Задачи',          action:() => { closeMargoPanel(); goTab('lists'); } },
-    { icon:'🎁', label:'Идеи подарков',   action:() => { closeMargoPanel(); goTab('lists'); lTab('gifts', document.querySelector('#seg-lists .seg-btn:last-child')); } },
-    { icon:'📆', label:'Открыть календарь', action:() => window.open('https://calendar.google.com/calendar/u/0/r', '_blank') }
+    { icon:'📅', label:'Расписание',    cmd:'расписание' },
+    { icon:'💊', label:'БАДы',          cmd:'бады' },
+    { icon:'📊', label:'Аналитика',     cmd:'аналитика здоровья' },
+    { icon:'✦',  label:'Полный анализ', cmd:'полная аналитика' },
   ];
-  window._margoCmds = cmds;
-  document.getElementById('qa-grid').innerHTML = cmds.map((c,i) =>
-    `<button class="qa-btn" onclick="_margoCmds[${i}].action()">
+  document.getElementById('qa-grid').innerHTML = cmds.map(c =>
+    `<button class="qa-btn" onclick="sendCmd('${c.cmd}')">
       <span class="qa-icon">${c.icon}</span>${c.label}
     </button>`
   ).join('');
+}
+
+function sendCmd(cmd) {
+  document.getElementById('chat-inp').value = cmd;
+  chatSend();
 }
 
 function addBubble(text, isMe) {
@@ -1685,6 +1744,24 @@ async function chatSend() {
   typing.textContent = '…';
   document.getElementById('chat-area').appendChild(typing);
 
+  // Фокус-режим — отдельная ветка, ask_margo про него не знает
+  if (/фокус/i.test(text)) {
+    const plan = await call({ action: 'focus_mode', text });
+    typing.remove();
+    if (plan.error) { addBubble('Не получилось собрать план: ' + plan.error, false); return; }
+
+    let out = '🎯 Фокус\n\nРабота (до 18:00):\n';
+    out += plan.work.length ? plan.work.map(t => `  • ${t.title}${t.note ? ' — ' + t.note : ''}`).join('\n') : '  (пусто)';
+    out += '\n\nОстальное (после 18:00-19:00):\n';
+    out += plan.other.length ? plan.other.map(t => `  • ${t.title}${t.note ? ' — ' + t.note : ''}`).join('\n') : '  (пусто)';
+    if (plan.reserve && plan.reserve.length) {
+      out += '\n\nОтложено (когда основное сделано):\n';
+      out += plan.reserve.map(t => `  • ${t.title}`).join('\n');
+    }
+    addBubble(out.trim(), false);
+    return;
+  }
+
   const r = await call({ action:'ask_margo', text });
   typing.remove();
 
@@ -1702,12 +1779,6 @@ async function chatSend() {
 }
 
 function chatKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
-
-function sendCmd(text) {
-  const inp = document.getElementById('chat-inp');
-  inp.value = text;
-  chatSend();
-}
 
 // ════════════════════════════════════════════════════════
 // ACTIONS
@@ -1954,5 +2025,6 @@ function showToast(text) {
 // ════════════════════════════════════════════════════════
 checkAuth();
 </script>
+
 </body>
 </html>
