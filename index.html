@@ -15,7 +15,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
-/* ─── ТОКЕНЫ ────────────────────────────────────────────── */
 :root {
   --cream:       #FAF9F6;
   --cream2:      #F3F1EC;
@@ -28,16 +27,15 @@
   --ink2:        #6B6760;
   --ink3:        #A8A49D;
 
-  /* акценты — каждый для своей категории */
-  --sage:        #7A9B8A;      /* здоровье */
+  --sage:        #7A9B8A;
   --sage-soft:   #EEF4F0;
-  --blush:       #C4918A;      /* цикл / состояние */
+  --blush:       #C4918A;
   --blush-soft:  #F7EFEE;
-  --slate:       #7A92A8;      /* тренировки */
+  --slate:       #7A92A8;
   --slate-soft:  #EEF2F7;
-  --lavender:    #9A8AB4;      /* Марго / аналитика */
+  --lavender:    #9A8AB4;
   --lavender-soft: #F3F0F8;
-  --sand:        #B8A882;      /* задачи */
+  --sand:        #B8A882;
   --sand-soft:   #F7F4EE;
 
   --radius:      16px;
@@ -46,7 +44,6 @@
   --font:        'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
-/* ─── RESET ─────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box; margin: 0; padding: 0;
   -webkit-tap-highlight-color: transparent;
@@ -63,7 +60,6 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── AUTH ───────────────────────────────────────────────── */
 #auth {
   position: fixed; inset: 0;
   display: flex; flex-direction: column;
@@ -121,7 +117,6 @@ html, body {
   text-align: center; display: none;
 }
 
-/* ─── SHELL ─────────────────────────────────────────────── */
 #app { display: flex; flex-direction: column; height: 100dvh; }
 #app.gone { display: none; }
 
@@ -132,7 +127,6 @@ html, body {
   scroll-behavior: smooth;
 }
 
-/* ─── TAB BAR ────────────────────────────────────────────── */
 .tabbar {
   position: fixed; bottom: 0; left: 0; right: 0;
   height: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
@@ -154,11 +148,9 @@ html, body {
 .tab svg { width: 22px; height: 22px; stroke-width: 1.4; }
 .tab.on { color: var(--ink); }
 
-/* ─── SCREEN ─────────────────────────────────────────────── */
 .screen { display: none; }
 .screen.on { display: block; }
 
-/* ─── PAGE HEADER ────────────────────────────────────────── */
 .page-top {
   padding: 56px 24px 20px;
   position: sticky; top: 0;
@@ -178,7 +170,6 @@ html, body {
   letter-spacing: -0.3px; color: var(--ink);
 }
 
-/* ─── CARDS FLOW ─────────────────────────────────────────── */
 .flow { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
 
 .card {
@@ -207,7 +198,6 @@ html, body {
 
 .card-body { padding: 0 18px 16px; }
 
-/* ─── INSIGHT CARD ───────────────────────────────────────── */
 .insight-card {
   background: var(--lavender-soft);
   border-color: transparent;
@@ -225,7 +215,19 @@ html, body {
   font-size: 14px; color: var(--ink); line-height: 1.6;
 }
 
-/* ─── PHASE PILL ─────────────────────────────────────────── */
+.insight-refresh {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: none; background: rgba(28,26,23,0.06);
+  color: var(--lavender);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: transform 0.3s ease, background 0.15s ease;
+}
+.insight-refresh:active { background: rgba(28,26,23,0.12); }
+.insight-refresh svg { width: 15px; height: 15px; }
+.insight-refresh.spinning svg { animation: spin 0.6s linear; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(180deg); } }
+
 .phase-pill {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 12px 5px 8px;
@@ -235,7 +237,6 @@ html, body {
 
 .phase-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
-/* ─── ROW LIST ───────────────────────────────────────────── */
 .row {
   display: flex; align-items: center; gap: 12px;
   padding: 11px 0;
@@ -247,7 +248,6 @@ html, body {
 .row-meta { font-size: 12px; color: var(--ink3); }
 .row-warn { color: var(--blush); }
 
-/* ─── TASK ROW ───────────────────────────────────────────── */
 .task-row {
   display: flex; align-items: center; gap: 12px;
   padding: 11px 0; border-bottom: 1px solid var(--border);
@@ -276,7 +276,6 @@ html, body {
 .task-row.done .task-name { color: var(--ink3); text-decoration: line-through; }
 .task-dur { font-size: 11px; color: var(--ink3); }
 
-/* ─── METRICS GRID ───────────────────────────────────────── */
 .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px 12px; }
 
 .metric-cell {
@@ -291,7 +290,6 @@ html, body {
 .metric-up    { color: var(--sage); }
 .metric-down  { color: var(--blush); }
 
-/* ─── SPARKLINE ─────────────────────────────────────────── */
 .spark { display: flex; align-items: flex-end; gap: 3px; height: 28px; margin-top: 8px; }
 .spark-b {
   flex: 1; border-radius: 2px 2px 0 0;
@@ -300,7 +298,6 @@ html, body {
 }
 .spark-b.now { opacity: 0.7; }
 
-/* ─── SEGMENT ────────────────────────────────────────────── */
 .seg {
   display: flex; gap: 1px;
   background: var(--cream3);
@@ -317,7 +314,6 @@ html, body {
 }
 .seg-btn.on { background: var(--white); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 
-/* ─── TEMPLATE CHIPS ─────────────────────────────────────── */
 .chip-row {
   display: flex; gap: 8px; overflow-x: auto;
   padding: 0 16px 14px; scrollbar-width: none;
@@ -335,7 +331,6 @@ html, body {
 }
 .chip:active { background: var(--cream2); }
 
-/* ─── WORKOUT LOG ────────────────────────────────────────── */
 .ex-row {
   display: flex; justify-content: space-between; align-items: center;
   padding: 10px 0; border-bottom: 1px solid var(--border);
@@ -352,7 +347,6 @@ html, body {
   padding: 1px 5px; border-radius: 4px; margin-left: 4px;
 }
 
-/* ─── ADD BUTTON ─────────────────────────────────────────── */
 .add-btn {
   display: flex; align-items: center; justify-content: center; gap: 6px;
   margin: 4px 16px 8px;
@@ -362,7 +356,6 @@ html, body {
   font-size: 13px; font-family: var(--font); cursor: pointer;
 }
 
-/* ─── MOOD CHIPS ─────────────────────────────────────────── */
 .mood-row {
   display: flex; flex-wrap: wrap; gap: 7px; padding: 4px 0 8px;
 }
@@ -374,10 +367,8 @@ html, body {
 }
 .mood-chip.on { background: var(--blush); border-color: var(--blush); color: white; }
 
-/* ─── MARGO CHAT ─────────────────────────────────────────── */
 .chat-area { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
 
-/* ─── MARGO FAB + PANEL ──────────────────────────────────── */
 .margo-fab {
   position: fixed; right: 18px;
   bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 18px);
@@ -453,7 +444,6 @@ html, body {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* ─── QUICK ACTIONS ──────────────────────────────────────── */
 .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px 12px; }
 .qa-btn {
   padding: 14px; border-radius: var(--radius);
@@ -464,7 +454,6 @@ html, body {
 }
 .qa-icon { font-size: 17px; flex-shrink: 0; }
 
-/* ─── BIRTHDAY BANNER ────────────────────────────────────── */
 .bday {
   display: flex; align-items: center; gap: 14px;
   padding: 14px 18px;
@@ -475,7 +464,6 @@ html, body {
 .bday-text .title  { font-size: 14px; font-weight: 500; }
 .bday-text .sub    { font-size: 12px; color: var(--sand); margin-top: 2px; }
 
-/* ─── MODAL ──────────────────────────────────────────────── */
 .overlay {
   position: fixed; inset: 0; z-index: 300;
   background: rgba(28,26,23,0.4);
@@ -522,13 +510,10 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 .modal-btn-primary { background: var(--ink); color: var(--cream); }
 .modal-btn-cancel  { background: var(--cream2); color: var(--ink2); }
 
-/* ─── EMPTY STATE ────────────────────────────────────────── */
 .empty { padding: 32px 18px; color: var(--ink3); font-size: 14px; text-align: center; line-height: 1.6; }
 
-/* ─── LOADING ────────────────────────────────────────────── */
 .loading { padding: 40px 18px; text-align: center; color: var(--ink3); font-size: 13px; }
 
-/* ─── SKELETON LOADING ───────────────────────────────────── */
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -561,7 +546,6 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 .skeleton-line.w-80 { width: 80%; }
 .skeleton-line.w-90 { width: 90%; }
 
-/* ─── TOAST ──────────────────────────────────────────────── */
 #toast {
   position: fixed; left: 50%; bottom: calc(var(--tab-h) + 24px);
   transform: translateX(-50%) translateY(20px);
@@ -576,7 +560,6 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 
 .btn-saving { opacity: 0.5; pointer-events: none; }
 
-/* ─── ANIM: ОТКРЫТИЕ ПРИЛОЖЕНИЯ ──────────────────────────── */
 #app-open {
   position: fixed; inset: 0; z-index: 250;
   background: var(--cream);
@@ -604,7 +587,6 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 @keyframes aot4{0%,7%{transform:translate(5px,5px) rotate(-3deg)}40%{transform:translate(-113px,70px) rotate(46deg)}83%{transform:translate(-27px,21px) rotate(20deg)}100%{transform:translate(5px,5px) rotate(-3deg)}}
 @keyframes aot5{0%,7%{transform:translate(11px,11px) rotate(5deg)}40%{transform:translate(94px,99px) rotate(-20deg)}83%{transform:translate(32px,79px) rotate(-8deg)}100%{transform:translate(11px,11px) rotate(5deg)}}
 
-/* ─── ANIM: ЗАГРУЗКА БЛОКОВ ──────────────────────────────── */
 .bload { position: relative; width: 100%; max-width: 360px; height: 210px; margin: 24px auto; }
 .bload-bar {
   position: absolute; left: 0; width: 100%; height: 56px;
@@ -629,8 +611,6 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 <body>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
-<!-- ─── AUTH ──────────────────────────────────────────────── -->
 
 <div id="auth">
   <div class="auth-wordmark">Life OS</div>
@@ -647,8 +627,6 @@ oninput="if(this.value.length===6) verifyCode()">
   <div class="auth-err" id="auth-err">Неверный или истёкший код</div>
 </div>
 
-<!-- ─── APP ───────────────────────────────────────────────── -->
-
 <div id="app-open">
   <div class="ao-wrap">
     <div class="ao-chip c1">🌿</div>
@@ -663,15 +641,12 @@ oninput="if(this.value.length===6) verifyCode()">
 
   <div class="scroll-area" id="scroll">
 
-
-<!-- HOME -->
 <div class="screen on" id="s-home">
   <div class="page-top">
     <div class="page-label" id="h-label">сегодня</div>
     <div class="page-title" id="h-title">—</div>
   </div>
   <div class="flow" id="home-flow">
-
 
   <div class="bload">
     <div class="bload-bar" style="top:0"></div>
@@ -684,8 +659,6 @@ oninput="if(this.value.length===6) verifyCode()">
 </div>
     </div>
 
-
-<!-- HEALTH -->
 <div class="screen" id="s-health">
   <div class="page-top">
     <div class="page-label">данные</div>
@@ -703,14 +676,12 @@ oninput="if(this.value.length===6) verifyCode()">
   <div id="ht-measure" style="display:none"></div>
 </div>
 
-<!-- WORKOUTS -->
 <div class="screen" id="s-workouts">
   <div class="page-top">
     <div class="page-label">активность</div>
     <div class="page-title">Тренировки</div>
   </div>
   <div id="workout-flow">
-
 
   <div class="bload">
     <div class="bload-bar" style="top:0"></div>
@@ -723,8 +694,6 @@ oninput="if(this.value.length===6) verifyCode()">
 </div>
     </div>
 
-
-<!-- LISTS -->
 <div class="screen" id="s-lists">
   <div class="page-top">
     <div class="page-label">органайзер</div>
@@ -744,7 +713,6 @@ oninput="if(this.value.length===6) verifyCode()">
   <div id="lt-gifts"    style="display:none"></div>
 </div>
 
-<!-- MARGO -->
 <button class="margo-fab" onclick="openMargoPanel()">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
 </button>
@@ -769,10 +737,7 @@ oninput="if(this.value.length===6) verifyCode()">
   </div>
 </div>
 
-
-  </div><!-- /scroll -->
-
-  <!-- TAB BAR -->
+  </div>
 
   <nav class="tabbar">
     <button class="tab on" id="tab-home" onclick="goTab('home')">
@@ -795,8 +760,6 @@ oninput="if(this.value.length===6) verifyCode()">
 </div>
 </div>
 
-<!-- MODAL -->
-
 <div class="overlay gone" id="overlay" onclick="overlayClick(event)">
   <div class="modal" id="modal-body">
     <div class="modal-handle"></div>
@@ -806,32 +769,23 @@ oninput="if(this.value.length===6) verifyCode()">
 <div id="toast"></div>
 
 <script>
-// Ждём полной загрузки DOM
 document.addEventListener('DOMContentLoaded', function() {
   if (window.Telegram && window.Telegram.WebApp) {
     const tg = window.Telegram.WebApp;
     tg.ready();
-    tg.expand(); // пробуем сразу
+    tg.expand();
 
-    // Иногда expand срабатывает не сразу, поэтому попробуем через небольшую задержку
     setTimeout(function() {
       tg.expand();
     }, 50);
 
-    // И ещё раз при первом касании экрана (на всякий случай)
     document.addEventListener('touchstart', function() {
       tg.expand();
     }, { once: true });
   }
 });
-// ════════════════════════════════════════════════════════
-// CONFIG
-// ════════════════════════════════════════════════════════
 const API = "https://script.google.com/macros/s/AKfycbxcCGzOir9xYySL5cOFdGl2xcBmvsilm2_MxfcXJpAcppYqXfPKeRReo5ttp-iWrzpJwA/exec";
 
-// ════════════════════════════════════════════════════════
-// AUTH
-// ════════════════════════════════════════════════════════
 let TOKEN = localStorage.getItem('los_token');
 
 function checkAuth() {
@@ -870,7 +824,6 @@ function showApp() {
   setTimeout(() => {
     anim.classList.remove('show');
     document.getElementById('app').classList.remove('gone');
-    // Принудительно разворачиваем после появления интерфейса
     if (window.Telegram && window.Telegram.WebApp) {
       const tg = window.Telegram.WebApp;
       if (tg.requestFullscreen) {
@@ -879,12 +832,9 @@ function showApp() {
         tg.expand();
       }
     }
-  }, 3200); // сразу после завершения анимации (3100 + небольшой запас)
+  }, 3200);
 }
 
-// ════════════════════════════════════════════════════════
-// API
-// ════════════════════════════════════════════════════════
 async function call(params) {
   const url = new URL(API);
   if (TOKEN) params.token = TOKEN;
@@ -893,9 +843,6 @@ async function call(params) {
   return r.json();
 }
 
-// ════════════════════════════════════════════════════════
-// NAVIGATION
-// ════════════════════════════════════════════════════════
 let activeTab = 'home';
 const loaded  = new Set();
 
@@ -926,9 +873,6 @@ function closeMargoPanel() {
   document.getElementById('margo-backdrop').classList.remove('open');
 }
 
-// ════════════════════════════════════════════════════════
-// LOAD ALL
-// ════════════════════════════════════════════════════════
 function loadAll() { loadHome(); }
 
 function showSkeleton(containerId, count = 3) {
@@ -959,9 +903,6 @@ function showBload(containerId) {
     </div>`;
 }
   
-// ════════════════════════════════════════════════════════
-// HOME
-// ════════════════════════════════════════════════════════
 const PHASE_META = {
   menstrual:  { label: 'Менструальная', color: '#C4918A', soft: '#F7EFEE' },
   follicular: { label: 'Фолликулярная', color: '#7A9B8A', soft: '#EEF4F0' },
@@ -980,14 +921,26 @@ async function loadHome() {
   showBload('home-flow');
   const d = await call({ action: 'dashboard' });
   renderHome(d);
-  call({ action: 'home_insight' }).then(r => {
-    const el = document.getElementById('home-insight-text');
-    if (el) el.textContent = r.insight || 'Пока нет данных для наблюдений — заполни данные здоровья.';
+  loadInsight();
+}
+
+function loadInsight(force) {
+  const el  = document.getElementById('home-insight-text');
+  const btn = document.getElementById('insight-refresh-btn');
+  if (force) {
+    if (el)  el.textContent = 'Обновляю…';
+    if (btn) btn.classList.add('spinning');
+  }
+  const params = { action: 'home_insight' };
+  if (force) params.force = 1;
+  call(params).then(r => {
+    const el2 = document.getElementById('home-insight-text');
+    if (el2) el2.textContent = r.insight || 'Пока нет данных для наблюдений — заполни данные здоровья.';
+    if (btn) btn.classList.remove('spinning');
   });
 }
 
 function renderHome(d) {
-  // header
   const now = new Date();
   document.getElementById('h-label').textContent =
     now.toLocaleDateString('ru-RU', { weekday: 'long' });
@@ -996,10 +949,15 @@ function renderHome(d) {
 
   let html = '';
 
-  // ── Инсайт Марго (placeholder пока нет AI-вызова на главной)
- html += `<div class="card insight-card">
+  html += `<div class="card insight-card">
     <div class="card-top">
       <span class="card-eyebrow" style="color:var(--lavender)">Что заметила Марго</span>
+      <button class="insight-refresh" id="insight-refresh-btn" onclick="loadInsight(true)" aria-label="Обновить">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M4 4v6h6M20 20v-6h-6"/>
+          <path d="M5.5 9a7 7 0 0112.6-2M18.5 15a7 7 0 01-12.6 2"/>
+        </svg>
+      </button>
     </div>
     <div class="card-body">
       <div class="insight-text" id="home-insight-text">…</div>
@@ -1007,7 +965,6 @@ function renderHome(d) {
   </div>`;
 
 
-  // ── Фаза цикла
   if (d.phaseName && d.phaseKey) {
     const m = PHASE_META[d.phaseKey] || {};
     const tip = PHASE_TIP[d.phaseKey] || '';
@@ -1025,7 +982,6 @@ function renderHome(d) {
     </div>`;
   }
 
-  // ── День рождения
   if (d.birthdays && d.birthdays.length) {
     const b = d.birthdays[0];
     const ds = b.daysUntil === 0 ? 'сегодня 🎂' : `через ${b.daysUntil} ${pDays(b.daysUntil)}`;
@@ -1038,7 +994,6 @@ function renderHome(d) {
     </div>`;
   }
 
-  // ── Записать состояние
   if (!d.healthTodayFilled) {
     html += `<div class="card" style="border-color:var(--blush);cursor:pointer" onclick="openMoodModal()">
       <div class="card-body" style="padding-top:14px;display:flex;align-items:center;justify-content:space-between">
@@ -1048,7 +1003,6 @@ function renderHome(d) {
     </div>`;
   }
 
-  // ── События
   if (d.events && d.events.length) {
     html += `<div class="card">
       <div class="card-top"><span class="card-eyebrow">Сегодня</span></div>
@@ -1063,7 +1017,6 @@ function renderHome(d) {
     html += `</div></div>`;
   }
 
-  // ── Задачи (топ-5)
   if (d.tasks && d.tasks.length) {
     html += `<div class="card">
       <div class="card-top">
@@ -1081,7 +1034,6 @@ function renderHome(d) {
     html += `</div></div>`;
   }
 
-  // ── БАДы
   if (d.supps && d.supps.length) {
     html += `<div class="card">
       <div class="card-top"><span class="card-eyebrow">Принимаю сегодня</span></div>
@@ -1100,9 +1052,6 @@ function renderHome(d) {
   document.getElementById('home-flow').innerHTML = html || '<div class="empty">Добавь события или задачи чтобы видеть их здесь</div>';
 }
 
-// ════════════════════════════════════════════════════════
-// HEALTH
-// ════════════════════════════════════════════════════════
 let hLoading = false;
  
 async function loadHealth() {
@@ -1116,7 +1065,7 @@ async function loadHealth() {
       call({ action: 'body_score_history' }),
       call({ action: 'body_measurements' })
     ]);
-    renderMetrics(hd, bs.history);
+    renderMetrics(hd);
     renderMood(hd);
     renderSupps(sd);
     renderMeasurements(md);
@@ -1213,6 +1162,7 @@ function renderMetrics(d) {
     return;
   }
   const l = d.latest;
+  window._latestHealth = l;
   const sleep = (l.deepSleep && l.lightSleep && l.remSleep)
     ? ((+l.deepSleep + +l.lightSleep + +l.remSleep)/60).toFixed(1) : '—';
 
@@ -1387,9 +1337,6 @@ async function completeSuppUI(name, btn) {
   loaded.delete('health'); if (activeTab==='health') loadHealth();
 }
 
-// ════════════════════════════════════════════════════════
-// WORKOUTS
-// ════════════════════════════════════════════════════════
 async function loadWorkouts() {
   showBload('workout-flow');
   const [wd, td] = await Promise.all([call({ action:'workouts' }), call({ action:'workout_templates' })]);
@@ -1399,11 +1346,10 @@ async function loadWorkouts() {
 function renderWorkouts(wd, td) {
   const templates = td.templates || [];
   const workouts  = wd.workouts  || [];
-  window._workoutsCache = workouts; // для просмотра деталей по индексу
+  window._workoutsCache = workouts;
 
   let html = '';
 
-  // Шаблоны
   html += `<div class="flow"><div class="card">
     <div class="card-top"><span class="card-eyebrow">Начать тренировку</span></div>
     <div class="chip-row">`;
@@ -1411,10 +1357,12 @@ function renderWorkouts(wd, td) {
     html += `<button class="chip" onclick="startWorkout(${encodeData(t)})">${t.name}</button>`;
   });
   html += `</div>
+    <div class="qa-grid" style="padding:0 16px 12px;grid-template-columns:1fr">
+      <button class="qa-btn" onclick="openProgressModal()"><span class="qa-icon">📈</span>Прогресс по упражнению</button>
+    </div>
     <button class="add-btn" onclick="openAddTemplateModal()">+ Создать свой шаблон</button>
   </div>`;
 
-  // История
   if (workouts.length) {
     html += `<div class="card">
       <div class="card-top"><span class="card-eyebrow">История</span></div>
@@ -1468,6 +1416,7 @@ function templateExerciseRow(i) {
       <input class="form-field" type="text" placeholder="повт. или время (40 сек)" id="nt-ex-reps-${i}" style="text-align:center">
       <input class="form-field" type="number" placeholder="кг" id="nt-ex-weight-${i}" style="text-align:center">
     </div>
+    <input class="form-field" id="nt-ex-alt-${i}" type="text" placeholder="Замена, если не подойдёт (необязательно)" style="margin-top:6px;font-size:13px">
   </div>`;
 }
 
@@ -1482,7 +1431,7 @@ async function saveNewTemplate() {
   for (let i = 0; i < newTemplateExCount; i++) {
     const exName = v('nt-ex-name-' + i);
     if (!exName) continue;
-    exercises.push({ name: exName, sets: v('nt-ex-sets-'+i), reps: v('nt-ex-reps-'+i), weight: v('nt-ex-weight-'+i) });
+    exercises.push({ name: exName, sets: v('nt-ex-sets-'+i), reps: v('nt-ex-reps-'+i), weight: v('nt-ex-weight-'+i), alt: v('nt-ex-alt-'+i) });
   }
   if (!exercises.length) { showToast('Добавь хотя бы одно упражнение'); return; }
 
@@ -1529,15 +1478,73 @@ function encodeData(obj) {
   return "'" + encodeURIComponent(JSON.stringify(obj)) + "'";
 }
 
+async function openProgressModal() {
+  const data = await call({ action: 'exercise_names' });
+  const names = data.names || [];
+  if (!names.length) {
+    openModal(`<div class="modal-title">Прогресс</div><div class="empty">Пока нет истории упражнений с названиями</div>`);
+    return;
+  }
+  openModal(`
+    <div class="modal-title">Выбери упражнение</div>
+    <div class="chip-row" style="flex-wrap:wrap;padding:0 0 8px">
+      ${names.map(n => `<button class="chip" onclick="loadExerciseProgress('${esc(n)}')">${n}</button>`).join('')}
+    </div>
+    <div id="progress-chart-area"></div>
+  `);
+}
+
+async function loadExerciseProgress(name) {
+  const area = document.getElementById('progress-chart-area');
+  if (area) area.innerHTML = '<div class="loading">Загружаю…</div>';
+  const data = await call({ action: 'exercise_history', name });
+  const history = (data.history || []).filter(h => h.weight !== null && h.weight !== undefined);
+
+  if (!area) return;
+  if (history.length < 2) {
+    area.innerHTML = '<div class="empty">Пока маловато данных с весом для графика</div>';
+    return;
+  }
+
+  const w = 280, h = 100, pad = 10;
+  const weights = history.map(p => p.weight);
+  const min = Math.min(...weights), max = Math.max(...weights);
+  const range = (max - min) || 1;
+  const stepX = (w - pad*2) / (history.length - 1);
+  const points = history.map((p,i) => {
+    const x = pad + i * stepX;
+    const y = h - pad - ((p.weight - min) / range) * (h - pad*2);
+    return `${x},${y}`;
+  }).join(' ');
+
+  const first = history[0], last = history[history.length - 1];
+  const diff = Math.round((last.weight - first.weight) * 10) / 10;
+  const diffStr = diff === 0 ? 'без изменений' : (diff > 0 ? `+${diff} кг` : `${diff} кг`);
+
+  area.innerHTML = `
+    <div class="card" style="margin-top:12px">
+      <div class="card-body" style="padding-top:14px">
+        <div style="font-size:22px;font-weight:300;margin-bottom:2px">${last.weight} кг</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:8px">${first.date} → ${last.date} · ${diffStr}</div>
+        <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:${h}px">
+          <polyline points="${points}" fill="none" stroke="var(--slate)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>`;
+}
+
 function startWorkout(enc) {
   const t = JSON.parse(decodeURIComponent(enc));
 
   if (t.staged) { startStagedWorkout(t); return; }
 
-  // Старый простой шаблон (плоский список упражнений)
   let exHtml = (t.exercises || []).map((ex, i) => `
     <div class="form-group">
-      <label class="form-lbl">${ex.name}</label>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+        <label class="form-lbl" id="ex-label-${i}" style="margin:0">${ex.name}</label>
+        ${ex.alt ? `<button type="button" onclick="swapExercise(${i},'${esc(ex.name)}','${esc(ex.alt)}')" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--ink3);cursor:pointer;font-family:var(--font)">⇄ заменить</button>` : ''}
+      </div>
+      <input type="hidden" id="ex-name-val-${i}" value="${esc(ex.name)}">
       <div class="form-3col">
         <input class="form-field" type="number" placeholder="подх." value="${ex.defaultSets}" id="s${i}" style="text-align:center">
         <input class="form-field" type="text" placeholder="повт. или время" value="${ex.defaultReps}" id="r${i}" style="text-align:center">
@@ -1558,8 +1565,19 @@ function startWorkout(enc) {
     </div>
     <div class="modal-footer">
       <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
-      <button class="modal-btn modal-btn-primary" onclick='saveWorkout("${t.name}",${t.exercises.length},${JSON.stringify(t.exercises.map(e=>e.name))})'>Сохранить</button>
+      <button class="modal-btn modal-btn-primary" onclick='saveWorkout("${t.name}",${t.exercises.length})'>Сохранить</button>
     </div>`);
+}
+
+function swapExercise(i, original, alt) {
+  const label  = document.getElementById('ex-label-' + i);
+  const hidden = document.getElementById('ex-name-val-' + i);
+  const btn    = event.target;
+  const isAlt  = hidden.value === alt;
+  const next   = isAlt ? original : alt;
+  hidden.value = next;
+  label.textContent = next;
+  btn.style.background = isAlt ? 'none' : 'var(--cream2)';
 }
 
   function startStagedWorkout(t) {
@@ -1633,13 +1651,13 @@ async function saveStagedWorkout(name, exCount, exNames) {
 }
 
 
-async function saveWorkout(name, cnt, exNames) {
+async function saveWorkout(name, cnt) {
   const btn = document.querySelector('#overlay .modal-btn-primary');
   if (btn.classList.contains('btn-saving')) return;
   btn.classList.add('btn-saving'); btn.textContent = 'Сохраняю…';
   const exercises = [];
   for (let i = 0; i < cnt; i++) {
-    exercises.push({ name: exNames[i], sets: v('s'+i), reps: v('r'+i), weight: v('w'+i) });
+    exercises.push({ name: v('ex-name-val-'+i), sets: v('s'+i), reps: v('r'+i), weight: v('w'+i) });
   }
   await call({ action:'add_workout', type:name, duration:v('wdur'), exercises:JSON.stringify(exercises), note:v('wnote') });
   closeModal();
@@ -1647,9 +1665,6 @@ async function saveWorkout(name, cnt, exNames) {
   loaded.delete('workouts'); loadWorkouts();
 }
 
-// ════════════════════════════════════════════════════════
-// LISTS
-// ════════════════════════════════════════════════════════
 let listsCache = {};
 
 async function loadLists() {
@@ -1811,9 +1826,6 @@ function renderGifts() {
   document.getElementById('lt-gifts').innerHTML = html;
 }
 
-// ════════════════════════════════════════════════════════
-// MARGO
-// ════════════════════════════════════════════════════════
 function initMargo() {
   const cmds = [
     { icon:'📅', label:'Расписание',    cmd:'расписание' },
@@ -1853,7 +1865,6 @@ async function chatSend() {
   typing.textContent = '…';
   document.getElementById('chat-area').appendChild(typing);
 
-  // Фокус-режим — отдельная ветка, ask_margo про него не знает
   if (/фокус/i.test(text)) {
     const plan = await call({ action: 'focus_mode', text });
     typing.remove();
@@ -1874,6 +1885,20 @@ async function chatSend() {
   const r = await call({ action:'ask_margo', text });
   typing.remove();
 
+  if (r.intent === 'items') {
+    const w = r.written || [];
+    const ok = w.filter(x => !x.error);
+    if (!ok.length) { addBubble('Не получилось записать пункты.', false); return; }
+    let out = `Записала ${ok.length}:\n`;
+    ok.forEach(x => {
+      if (x.type === 'task') out += `${x.num}. ${x.title}${x.category ? ' (' + x.category + ')' : ''}\n`;
+      else out += `${x.num}. ${x.title}${x.date ? ' — ' + x.date + (x.time ? ' ' + x.time : '') : ''}\n`;
+    });
+    addBubble(out.trim(), false);
+    loaded.delete('lists');
+    return;
+  }
+
   if (r.intent === 'get_schedule') {
     addBubble('Расписание лучше смотреть через бота в Telegram — там полный доступ к Calendar.', false);
   } else if (r.intent === 'training_advice') {
@@ -1889,9 +1914,6 @@ async function chatSend() {
 
 function chatKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
 
-// ════════════════════════════════════════════════════════
-// ACTIONS
-// ════════════════════════════════════════════════════════
 async function completeTask(id, el) {
   const row = el.closest('.task-row');
   row.classList.add('done');
@@ -2004,7 +2026,7 @@ function pickMood(el, tag) {
 async function saveMood() {
   const score = v('ms'); if (!score) return;
   const btn = document.querySelector('#overlay .modal-btn-primary');
-  if (btn.classList.contains('btn-saving')) return; // защита от повторного тапа
+  if (btn.classList.contains('btn-saving')) return;
   btn.classList.add('btn-saving'); btn.textContent = 'Записываю…';
   await call({ action:'add_mood', score, tag:v('mt') });
   closeModal();
@@ -2099,9 +2121,6 @@ async function saveWeeklyHealth() {
   loaded.delete('health'); if (activeTab==='health') loadHealth();
 }
   
-// ════════════════════════════════════════════════════════
-// MODAL
-// ════════════════════════════════════════════════════════
 function openModal(html) {
   document.getElementById('modal-body').innerHTML = '<div class="modal-handle"></div>' + html;
   document.getElementById('overlay').classList.remove('gone');
@@ -2109,9 +2128,6 @@ function openModal(html) {
 function closeModal() { document.getElementById('overlay').classList.add('gone'); }
 function overlayClick(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
-// ════════════════════════════════════════════════════════
-// UTILS
-// ════════════════════════════════════════════════════════
 function v(id) { return (document.getElementById(id)?.value || '').trim(); }
 function esc(s) { return s.replace(/'/g,"&#39;"); }
 function r1(v) {
@@ -2129,11 +2145,8 @@ function showToast(text) {
   t._timer = setTimeout(() => t.classList.remove('show'), 2200);
 }
   
-// ════════════════════════════════════════════════════════
-// START
-// ════════════════════════════════════════════════════════
 checkAuth();
 </script>
- 
+
 </body>
 </html>
