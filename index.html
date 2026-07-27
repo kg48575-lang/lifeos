@@ -615,7 +615,7 @@ select.form-field { appearance: none; -webkit-appearance: none; }
   <div class="auth-wordmark">Life OS</div>
   <div class="auth-title">Привет</div>
   <div class="auth-divider"></div>
-  <div class="auth-body">Нажми кнопку — Марго пришлёт код в Telegram</div>
+  <div class="auth-body">Нажми кнопку — Ива пришлёт код в Telegram</div>
 
 <button class="btn btn-ghost" id="req-btn" onclick="requestCode()">Получить код</button>
 
@@ -976,7 +976,7 @@ function renderHome(d) {
 
   html += `<div class="card insight-card">
     <div class="card-top">
-      <span class="card-eyebrow" style="color:var(--lavender)">Что заметила Марго</span>
+      <span class="card-eyebrow" style="color:var(--lavender)">Что заметила Ива</span>
       <button class="insight-refresh" id="insight-refresh-btn" onclick="loadInsight(true)" aria-label="Обновить">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
           <path d="M4 4v6h6M20 20v-6h-6"/>
@@ -2035,7 +2035,7 @@ async function chatSend() {
   } else if (r.error) {
     addBubble('Не смогла обработать. Попробуй через бота в Telegram.', false);
   } else {
-    addBubble('Команда распознана. Для выполнения используй бота Марго в Telegram.', false);
+    addBubble('Команда распознана. Для выполнения используй бота Ива в Telegram.', false);
   }
 }
 
