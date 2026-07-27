@@ -826,7 +826,7 @@ function playMossBoot() {
   for (let i = 1; i <= frameCount; i++) {
     const img = document.createElement('img');
     img.className = 'moss-frame' + (i === 1 ? ' on' : '');
-    img.src = 'moss/moss-' + i + '.jpeg';
+    img.src = 'moss-' + i + '.jpeg';
     boot.appendChild(img);
     imgs.push(img);
   }
