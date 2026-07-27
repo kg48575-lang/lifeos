@@ -567,24 +567,25 @@ select.form-field { appearance: none; -webkit-appearance: none; }
 }
 #app-open.show { display: flex; }
 
-.ao-wrap { position: relative; width: 280px; height: 280px; }
-.ao-chip {
-  position: absolute; top: 107px; left: 107px;
-  width: 66px; height: 66px; border-radius: 18px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 30px;
+.moss-boot { position: absolute; inset: 0; overflow: hidden; }
+.moss-frame {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.22s ease;
 }
-.ao-chip.c1 { background: var(--sage-soft);     animation: aot1 3s ease-out 1; }
-.ao-chip.c2 { background: var(--blush-soft);    animation: aot2 3s ease-out 1 .04s; }
-.ao-chip.c3 { background: var(--lavender-soft); animation: aot3 3s ease-out 1 .08s; }
-.ao-chip.c4 { background: var(--slate-soft);    animation: aot4 3s ease-out 1 .12s; }
-.ao-chip.c5 { background: var(--sand-soft);     animation: aot5 3s ease-out 1 .16s; }
-
-@keyframes aot1{0%,7%{transform:translate(-11px,-11px) rotate(-6deg)}40%{transform:translate(-96px,-54px) rotate(-58deg)}83%{transform:translate(-80px,-12px) rotate(-35deg)}100%{transform:translate(-11px,-11px) rotate(-6deg)}}
-@keyframes aot2{0%,7%{transform:translate(-5px,-5px) rotate(-2deg)}40%{transform:translate(118px,-78px) rotate(34deg)}83%{transform:translate(76px,-55px) rotate(15deg)}100%{transform:translate(-5px,-5px) rotate(-2deg)}}
-@keyframes aot3{0%,7%{transform:translate(0,0) rotate(3deg)}40%{transform:translate(-24px,115px) rotate(-72deg)}83%{transform:translate(-36px,68px) rotate(-35deg)}100%{transform:translate(0,0) rotate(3deg)}}
-@keyframes aot4{0%,7%{transform:translate(5px,5px) rotate(-3deg)}40%{transform:translate(-113px,70px) rotate(46deg)}83%{transform:translate(-27px,21px) rotate(20deg)}100%{transform:translate(5px,5px) rotate(-3deg)}}
-@keyframes aot5{0%,7%{transform:translate(11px,11px) rotate(5deg)}40%{transform:translate(94px,99px) rotate(-20deg)}83%{transform:translate(32px,79px) rotate(-8deg)}100%{transform:translate(11px,11px) rotate(5deg)}}
+.moss-frame.on { opacity: 1; }
+.moss-boot-label {
+  position: absolute; left: 0; right: 0; bottom: 15%;
+  text-align: center; z-index: 5;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 22px; color: var(--cream);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.moss-boot-label.on { opacity: 1; }
 
 .bload { position: relative; width: 100%; max-width: 360px; height: 210px; margin: 24px auto; }
 .bload-bar {
@@ -625,15 +626,7 @@ oninput="if(this.value.length===6) verifyCode()">
   <div class="auth-err" id="auth-err">Неверный или истёкший код</div>
 </div>
 
-<div id="app-open">
-  <div class="ao-wrap">
-    <div class="ao-chip c1">🌿</div>
-    <div class="ao-chip c2">🌙</div>
-    <div class="ao-chip c3">🪶</div>
-    <div class="ao-chip c4">📅</div>
-    <div class="ao-chip c5">✨</div>
-  </div>
-</div>  
+<div class="moss-boot" id="moss-boot"></div> 
 
 <div id="app" class="gone">
 
@@ -821,22 +814,50 @@ async function verifyCode() {
   }
 }
 
+function playMossBoot() {
+  const boot = document.getElementById('moss-boot');
+  boot.innerHTML = '';
+  const frameCount = 19;
+  const imgs = [];
+  for (let i = 1; i <= frameCount; i++) {
+    const img = document.createElement('img');
+    img.className = 'moss-frame' + (i === 1 ? ' on' : '');
+    img.src = 'moss/moss-' + i + '.jpeg';  // ← .jpeg, как в твоём репозитории
+    boot.appendChild(img);
+    imgs.push(img);
+  }
+  const label = document.createElement('div');
+  label.className = 'moss-boot-label';
+  label.textContent = 'Ива на связи';
+  boot.appendChild(label);
+
+  let idx = 0;
+  const interval = setInterval(() => {
+    idx++;
+    if (idx >= frameCount) {
+      clearInterval(interval);
+      setTimeout(() => label.classList.add('on'), 150);
+      return;
+    }
+    imgs.forEach(im => im.classList.remove('on'));
+    imgs[idx].classList.add('on');
+  }, 150);
+}
+
+  
 function showApp() {
   document.getElementById('auth').classList.add('gone');
   const anim = document.getElementById('app-open');
   anim.classList.add('show');
+  playMossBoot();
   setTimeout(() => {
     anim.classList.remove('show');
     document.getElementById('app').classList.remove('gone');
     if (window.Telegram && window.Telegram.WebApp) {
       const tg = window.Telegram.WebApp;
-      if (tg.requestFullscreen) {
-        tg.requestFullscreen();
-      } else {
-        tg.expand();
-      }
+      if (tg.requestFullscreen) tg.requestFullscreen(); else tg.expand();
     }
-  }, 3200);
+  }, 3300); // 19 кадров × 150мс + запас на подпись
 }
 
 async function call(params) {
