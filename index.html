@@ -816,13 +816,17 @@ async function verifyCode() {
 
 function playMossBoot() {
   const boot = document.getElementById('moss-boot');
+  if (!boot) {
+    console.error('НЕТ ЭЛЕМЕНТА #moss-boot — проверь, что div id="moss-boot" реально вставлен вместо .ao-wrap');
+    return;
+  }
   boot.innerHTML = '';
   const frameCount = 19;
   const imgs = [];
   for (let i = 1; i <= frameCount; i++) {
     const img = document.createElement('img');
     img.className = 'moss-frame' + (i === 1 ? ' on' : '');
-    img.src = 'moss/moss-' + i + '.jpeg';  // ← .jpeg, как в твоём репозитории
+    img.src = 'moss/moss-' + i + '.jpeg';
     boot.appendChild(img);
     imgs.push(img);
   }
@@ -844,20 +848,28 @@ function playMossBoot() {
   }, 150);
 }
 
-  
 function showApp() {
-  document.getElementById('auth').classList.add('gone');
-  const anim = document.getElementById('app-open');
-  anim.classList.add('show');
+  const authEl = document.getElementById('auth');
+  const bootEl = document.getElementById('app-open');
+  const appEl  = document.getElementById('app');
+
+  if (!authEl) console.error('НЕТ ЭЛЕМЕНТА #auth');
+  if (!bootEl) console.error('НЕТ ЭЛЕМЕНТА #app-open');
+  if (!appEl)  console.error('НЕТ ЭЛЕМЕНТА #app');
+
+  if (authEl) authEl.classList.add('gone');
+  if (bootEl) bootEl.classList.add('show');
   playMossBoot();
+
   setTimeout(() => {
-    anim.classList.remove('show');
-    document.getElementById('app').classList.remove('gone');
+    if (bootEl) bootEl.classList.remove('show');
+    if (appEl)  appEl.classList.remove('gone');
     if (window.Telegram && window.Telegram.WebApp) {
       const tg = window.Telegram.WebApp;
-      if (tg.requestFullscreen) tg.requestFullscreen(); else tg.expand();
+      if (tg.requestFullscreen) tg.requestFullscreen();
+      else tg.expand();
     }
-  }, 3300); // 19 кадров × 150мс + запас на подпись
+  }, 3300);
 }
 
 async function call(params) {
