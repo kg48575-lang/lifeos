@@ -2,7 +2,6 @@
   "name": "Life OS",
   "short_name": "Life OS",
   "start_url": "/lifeos/",
-  "scope": "/lifeos/",
   "display": "standalone",
   "background_color": "#FAF9F6",
   "theme_color": "#FAF9F6",
