@@ -1,4 +1,4 @@
-document.addEventListener(‘DOMContentLoaded’, function() {
+document.addEventListener('DOMContentLoaded', function() {
 if (window.Telegram && window.Telegram.WebApp) {
 const tg = window.Telegram.WebApp;
 tg.ready();
@@ -6,84 +6,84 @@ tg.expand();
 setTimeout(function() {
 tg.expand();
 }, 50);
-document.addEventListener(‘touchstart’, function() {
+document.addEventListener('touchstart', function() {
 tg.expand();
 }, { once: true });
 }
 });
-const API = “https://script.google.com/macros/s/AKfycbxcCGzOir9xYySL5cOFdGl2xcBmvsilm2_MxfcXJpAcppYqXfPKeRReo5ttp-iWrzpJwA/exec”;
-let TOKEN = localStorage.getItem(‘los_token’);
+const API = "https://script.google.com/macros/s/AKfycbxcCGzOir9xYySL5cOFdGl2xcBmvsilm2_MxfcXJpAcppYqXfPKeRReo5ttp-iWrzpJwA/exec";
+let TOKEN = localStorage.getItem('los_token');
 function checkAuth() {
 if (TOKEN) { showApp(); loadAll(); }
 }
 async function requestCode() {
-const btn = document.getElementById(‘req-btn’);
-btn.textContent = ‘Отправляю…’; btn.disabled = true;
+const btn = document.getElementById('req-btn');
+btn.textContent = 'Отправляю…'; btn.disabled = true;
 try {
-const r = await call({ action: ‘request_code’ });
+const r = await call({ action: 'request_code' });
 if (r.ok) {
-btn.textContent = ‘Код отправлен ✓’;
-const inp = document.getElementById(‘code-inp’);
-inp.style.display = ‘’; inp.focus();
-} else { btn.textContent = ‘Ошибка — попробуй снова’; btn.disabled = false; }
-} catch { btn.textContent = ‘Нет соединения’; btn.disabled = false; }
+btn.textContent = 'Код отправлен ✓';
+const inp = document.getElementById('code-inp');
+inp.style.display = ''; inp.focus();
+} else { btn.textContent = 'Ошибка — попробуй снова'; btn.disabled = false; }
+} catch { btn.textContent = 'Нет соединения'; btn.disabled = false; }
 }
 async function verifyCode() {
-const code = document.getElementById(‘code-inp’).value;
-const r = await call({ action: ‘verify_code’, code });
+const code = document.getElementById('code-inp').value;
+const r = await call({ action: 'verify_code', code });
 if (r.ok && r.token) {
 TOKEN = r.token;
-localStorage.setItem(‘los_token’, TOKEN);
+localStorage.setItem('los_token', TOKEN);
 showApp(); loadAll();
 } else {
-document.getElementById(‘auth-err’).style.display = ‘’;
+document.getElementById('auth-err').style.display = '';
 }
 }
 function playMossBoot() {
-const boot = document.getElementById(‘moss-boot’);
+const boot = document.getElementById('moss-boot');
 if (!boot) {
-console.error(‘НЕТ ЭЛЕМЕНТА #moss-boot — проверь, что div id=“moss-boot” реально вставлен вместо .ao-wrap’);
+console.error('НЕТ ЭЛЕМЕНТА #moss-boot — проверь, что div id="moss-boot" реально вставлен вместо .ao-wrap');
 return;
 }
-boot.innerHTML = ‘’;
+boot.innerHTML = '';
 const frameCount = 19;
 const imgs = [];
 for (let i = 1; i <= frameCount; i++) {
-const img = document.createElement(‘img’);
-img.className = ‘moss-frame’ + (i === 1 ? ’ on’ : ‘’);
-img.src = ‘moss-’ + i + ‘.jpeg’;
+const img = document.createElement('img');
+img.className = 'moss-frame' + (i === 1 ? ' on' : '');
+img.src = 'moss-' + i + '.jpeg';
 boot.appendChild(img);
 imgs.push(img);
 }
-const label = document.createElement(‘div’);
-label.className = ‘moss-boot-label’;
-label.textContent = ‘Ива на связи’;
+const label = document.createElement('div');
+label.className = 'moss-boot-label';
+label.textContent = 'Ива на связи';
 boot.appendChild(label);
 let idx = 0;
 const interval = setInterval(() => {
 idx++;
 if (idx >= frameCount) {
 clearInterval(interval);
-setTimeout(() => label.classList.add(‘on’), 150);
+setTimeout(() => label.classList.add('on'), 150);
 return;
 }
-imgs.forEach(im => im.classList.remove(‘on’));
-imgs[idx].classList.add(‘on’);
+imgs.forEach(im => im.classList.remove('on'));
+imgs[idx].classList.add('on');
 }, 150);
 }
 function showApp() {
-const authEl = document.getElementById(‘auth’);
-const bootEl = document.getElementById(‘app-open’);
-const appEl = document.getElementById(‘app’);
-if (!authEl) console.error(‘НЕТ ЭЛЕМЕНТА #auth’);
-if (!bootEl) console.error(‘НЕТ ЭЛЕМЕНТА #app-open’);
-if (!appEl) console.error(‘НЕТ ЭЛЕМЕНТА #app’);
-if (authEl) authEl.classList.add(‘gone’);
-if (bootEl) bootEl.classList.add(‘show’);
+const authEl = document.getElementById('auth');
+const bootEl = document.getElementById('app-open');
+const appEl = document.getElementById('app');
+if (!authEl) console.error('НЕТ ЭЛЕМЕНТА #auth');
+if (!bootEl) console.error('НЕТ ЭЛЕМЕНТА #app-open');
+if (!appEl) console.error('НЕТ ЭЛЕМЕНТА #app');
+if (authEl) authEl.classList.add('gone');
+if (bootEl) bootEl.classList.add('show');
 playMossBoot();
 setTimeout(() => {
-if (bootEl) bootEl.classList.remove(‘show’);
-if (appEl) appEl.classList.remove(‘gone’);
+if (bootEl) bootEl.classList.remove('show');
+if (appEl) appEl.classList.remove('gone');
 if (window.Telegram && window.Telegram.WebApp) {
 const tg = window.Telegram.WebApp;
 if (tg.requestFullscreen) tg.requestFullscreen();
@@ -98,52 +98,51 @@ Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, String(v)));
 const r = await fetch(url);
 return r.json();
 }
-let activeTab = ‘home’;
+let activeTab = 'home';
 const loaded = new Set();
 function goTab(name) {
-document.querySelectorAll(’.screen’).forEach(s => s.classList.remove(‘on’));
-document.querySelectorAll(’.tab’).forEach(t => t.classList.remove(‘on’));
-document.getElementById(‘s-’ + name).classList.add(‘on’);
-document.getElementById(‘tab-’ + name).classList.add(‘on’);
-document.getElementById(‘scroll’).scrollTo(0, 0);
+document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+document.getElementById('s-' + name).classList.add('on');
+document.getElementById('tab-' + name).classList.add('on');
+document.getElementById('scroll').scrollTo(0, 0);
 activeTab = name;
 if (!loaded.has(name)) {
 loaded.add(name);
-if (name === ‘health’) loadHealth();
-if (name === ‘workouts’) loadWorkouts();
-if (name === ‘lists’) loadLists();
+if (name === 'health') loadHealth();
+if (name === 'workouts') loadWorkouts();
+if (name === 'lists') loadLists();
 }
 }
 let margoInited = false;
 function openMargoPanel() {
-document.getElementById(‘margo-panel’).classList.add(‘open’);
-document.getElementById(‘margo-backdrop’).classList.add(‘open’);
+document.getElementById('margo-panel').classList.add('open');
+document.getElementById('margo-backdrop').classList.add('open');
 if (!margoInited) { margoInited = true; initMargo(); }
 }
 function closeMargoPanel() {
-document.getElementById(‘margo-panel’).classList.remove(‘open’);
-document.getElementById(‘margo-backdrop’).classList.remove(‘open’);
+document.getElementById('margo-panel').classList.remove('open');
+document.getElementById('margo-backdrop').classList.remove('open');
 }
 function loadAll() { loadHome(); }
 function showSkeleton(containerId, count = 3) {
 const el = document.getElementById(containerId);
 const patterns = [
-[‘w-40’, ‘w-90’, ‘w-60’],
-[‘w-60’, ‘w-80’],
-[‘w-40’, ‘w-90’, ‘w-40’]
+['w-40', 'w-90', 'w-60'],
+['w-60', 'w-80'],
+['w-40', 'w-90', 'w-40']
 ];
 el.innerHTML = Array(count).fill(0).map((_, i) => {
 const lines = patterns[i % patterns.length]
-.map(w => `<div class="skeleton-line ${w}"></div>`).join(’’);
+.map(w => `<div class="skeleton-line ${w}"></div>`).join('');
 return `<div class="skeleton-card" style="animation-delay:${i * 0.12}s">${lines}</div>`;
-}).join(’’);
+}).join('');
 }
 function showBload(containerId) {
 const el = document.getElementById(containerId);
 if (!el) return;
-const leafSVG = ‘<svg viewBox="0 0 24 28"><path class="leaf-body" d="M12 2C6 6 3 11 3 16c0 6 4 10 9 10s9-4 9-10c0-5-3-10-9-14z"/><line class="leaf-vein" x1="12" y1="6" x2="12" y2="24"/></svg>’;
+const leafSVG = '<svg viewBox="0 0 24 28"><path class="leaf-body" d="M12 2C6 6 3 11 3 16c0 6 4 10 9 10s9-4 9-10c0-5-3-10-9-14z"/><line class="leaf-vein" x1="12" y1="6" x2="12" y2="24"/></svg>';
 el.innerHTML = `
-
 <div class="leaf-loader">
 <div class="fly-leaf f1">${leafSVG}</div>
 <div class="fly-leaf f2">${leafSVG}</div>
