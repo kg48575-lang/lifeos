@@ -8,16 +8,16 @@
 --ink: #1C1A17;
 --ink2: #6B6760;
 --ink3: #A8A49D;
---sage: #7A9B8A;
---sage-soft: #EEF4F0;
---blush: #C4918A;
---blush-soft: #F7EFEE;
---slate: #7A92A8;
---slate-soft: #EEF2F7;
---lavender: #9A8AB4;
---lavender-soft: #F3F0F8;
---sand: #B8A882;
---sand-soft: #F7F4EE;
+--sage: #4F7A5C;
+--sage-soft: #DCEAE0;
+--blush: #B36F76;
+--blush-soft: #F3E1E0;
+--slate: #5C7B95;
+--slate-soft: #E2EBF2;
+--lavender: #7C63A0;
+--lavender-soft: #E9E1F2;
+--sand: #A38A54;
+--sand-soft: #F0E9D6;
 --radius: 16px;
 --radius-sm: 10px;
 --tab-h: 56px;
@@ -476,14 +476,23 @@ align-items: center; justify-content: center;
 }
 #app-open.show { display: flex; }
 .moss-boot { position: absolute; inset: 0; overflow: hidden; }
-.moss-frame {
+.layer-sharp {
 position: absolute; inset: 0;
-width: 100%; height: 100%;
-object-fit: cover;
-opacity: 0;
-transition: opacity 0.22s ease;
+width: 100%; height: 100%; object-fit: cover; z-index: 1;
 }
-.moss-frame.on { opacity: 1; }
+.fog-veil {
+position: absolute; inset: 0; z-index: 2;
+background:
+radial-gradient(ellipse 60% 40% at 20% 15%, rgba(250,248,240,0.95), transparent 70%),
+radial-gradient(ellipse 70% 45% at 80% 10%, rgba(250,248,240,0.92), transparent 70%),
+radial-gradient(ellipse 55% 50% at 50% 30%, rgba(250,248,240,0.85), transparent 65%),
+radial-gradient(ellipse 80% 35% at 30% 85%, rgba(250,248,240,0.9), transparent 70%),
+radial-gradient(ellipse 65% 40% at 85% 80%, rgba(250,248,240,0.88), transparent 70%),
+rgba(250,248,240,0.35);
+mask-image: radial-gradient(circle at 50% 45%, transparent 0%, transparent var(--r,0%), black calc(var(--r,0%) + 22%), black 100%);
+-webkit-mask-image: radial-gradient(circle at 50% 45%, transparent 0%, transparent var(--r,0%), black calc(var(--r,0%) + 22%), black 100%);
+opacity: var(--fog-opacity, 1);
+}
 .moss-boot-label {
 position: absolute; left: 0; right: 0; bottom: 15%;
 text-align: center; z-index: 5;
@@ -508,7 +517,7 @@ font-size: 24px;
 .bload-chip.b2 { top: 73px; background: var(--lavender-soft); animation: bl2 3.6s ease-out infinite .12s; }
 .bload-chip.b3 { top: 143px; background: var(--sage-soft); animation: bl3 3.6s ease-out infinite .24s; }
 .leaf-loader { width: 100%; height: 150px; position: relative; overflow: hidden; }
-.fly-leaf { position:absolute; top:0; left:0; width:42px; height:42px; opacity:0; }
+.fly-leaf { position:absolute; top:50%; left:0; width:42px; height:42px; margin-top:-21px; opacity:0; }
 .fly-leaf svg { width:100%; height:100%; }
 .fly-leaf .leaf-vein { stroke: rgba(0,0,0,0.25); stroke-width: 0.9; fill:none; }
 .fly-leaf.f1 { animation: flutterA 3.2s linear infinite; }
