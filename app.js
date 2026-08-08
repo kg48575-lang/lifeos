@@ -100,11 +100,19 @@ else tg.expand();
 }, 5300);
 }
 async function call(params) {
-const url = new URL(API);
-if (TOKEN) params.token = TOKEN;
-Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, String(v)));
-const r = await fetch(url);
-return r.json();
+  const url = new URL(API);
+  if (TOKEN) params.token = TOKEN;
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, String(v)));
+
+  try {
+    const r = await fetch(url, { cache: 'no-store' });
+    const data = await r.json();
+    if (!r.ok) return { error: data?.error || `HTTP ${r.status}` };
+    return data;
+  } catch (e) {
+    console.error('API error:', params.action, e);
+    return { error: `Не удалось получить данные: ${e.message || e}` };
+  }
 }
 let activeTab = 'home';
 const loaded = new Set();
@@ -295,22 +303,43 @@ document.getElementById('home-flow').innerHTML = html || '<div class="empty">Д�
 }
 let hLoading = false;
 async function loadHealth() {
-if (hLoading) return;
-hLoading = true;
-showBload('ht-metrics');
-try {
-const [hd, sd, bs, md] = await Promise.all([
-call({ action: 'health' }),
-call({ action: 'supps' }),
-call({ action: 'body_score_history' }),
-call({ action: 'body_measurements' })
-]);
-renderMetrics(hd);
-renderMood(hd);
-renderSupps(sd);
-renderMeasurements(md);
-document.getElementById('ht-metrics').insertAdjacentHTML('beforeend', renderBodyScoreChart(bs.history));
-} finally { hLoading = false; }
+  if (hLoading) return;
+  hLoading = true;
+  showBload('ht-metrics');
+
+  try {
+    // Каждый блок здоровья загружается независимо.
+    // Если, например, график индекса временно не отвечает, обычные
+    // показатели веса/жира/мышц всё равно должны появиться.
+    const [healthRes, suppsRes, scoreRes] = await Promise.allSettled([
+      call({ action: 'health' }),
+      call({ action: 'supps' }),
+      call({ action: 'body_score_history' })
+    ]);
+
+    const hd = healthRes.status === 'fulfilled' ? healthRes.value : { error: healthRes.reason?.message };
+    const sd = suppsRes.status === 'fulfilled' ? suppsRes.value : { error: suppsRes.reason?.message };
+    const bs = scoreRes.status === 'fulfilled' ? scoreRes.value : { history: [], error: scoreRes.reason?.message };
+
+    if (hd.error) console.warn('Health API:', hd.error);
+    if (sd.error) console.warn('Supps API:', sd.error);
+    if (bs.error) console.warn('Body score API:', bs.error);
+
+    renderMetrics(hd);
+    renderMood(hd);
+    renderSupps(sd);
+
+    const chart = renderBodyScoreChart(bs.history || []);
+    if (chart) {
+      document.getElementById('ht-metrics').insertAdjacentHTML('beforeend', chart);
+    }
+  } catch (e) {
+    console.error('Health screen error:', e);
+    document.getElementById('ht-metrics').innerHTML =
+      '<div class="empty">Не удалось загрузить данные здоровья. Попробуй открыть экран ещё раз.</div>';
+  } finally {
+    hLoading = false;
+  }
 }
 function hTab(name, btn) {
 document.querySelectorAll('#seg-health .seg-btn').forEach(b => b.classList.remove('on'));
