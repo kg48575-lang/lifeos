@@ -40,37 +40,45 @@ document.getElementById('auth-err').style.display = '';
 }
 }
 function playMossBoot() {
-const boot = document.getElementById('moss-boot');
-if (!boot) {
-console.error('НЕТ ЭЛЕМЕНТА #moss-boot — проверь, что div id="moss-boot" реально вставлен вместо .ao-wrap');
-return;
+  const fog = document.getElementById('fog-veil');
+  const label = document.getElementById('moss-boot-label');
+
+  if (!fog || !label) {
+    console.error('НЕТ #fog-veil или #moss-boot-label');
+    return;
+  }
+
+  // Начинаем с полностью туманного экрана.
+  label.classList.remove('on');
+  fog.style.setProperty('--r', '0%');
+  fog.style.setProperty('--fog-opacity', '1');
+
+  const duration = 5000;
+  const start = performance.now();
+
+  function frame(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 2.2);
+    const r = eased * 95;
+
+    fog.style.setProperty('--r', r + '%');
+
+    // В конце туман мягко растворяется, оставляя изображение.
+    if (t > 0.75) {
+      const fadeT = (t - 0.75) / 0.25;
+      fog.style.setProperty('--fog-opacity', String(1 - fadeT * 0.9));
+    }
+
+    if (t < 1) {
+      requestAnimationFrame(frame);
+    } else {
+      setTimeout(() => label.classList.add('on'), 200);
+    }
+  }
+
+  requestAnimationFrame(frame);
 }
-boot.innerHTML = '';
-const frameCount = 19;
-const imgs = [];
-for (let i = 1; i <= frameCount; i++) {
-const img = document.createElement('img');
-img.className = 'moss-frame' + (i === 1 ? ' on' : '');
-img.src = 'moss-' + i + '.jpeg';
-boot.appendChild(img);
-imgs.push(img);
-}
-const label = document.createElement('div');
-label.className = 'moss-boot-label';
-label.textContent = 'Ива на связи';
-boot.appendChild(label);
-let idx = 0;
-const interval = setInterval(() => {
-idx++;
-if (idx >= frameCount) {
-clearInterval(interval);
-setTimeout(() => label.classList.add('on'), 150);
-return;
-}
-imgs.forEach(im => im.classList.remove('on'));
-imgs[idx].classList.add('on');
-}, 150);
-}
+
 function showApp() {
 const authEl = document.getElementById('auth');
 const bootEl = document.getElementById('app-open');
@@ -89,7 +97,7 @@ const tg = window.Telegram.WebApp;
 if (tg.requestFullscreen) tg.requestFullscreen();
 else tg.expand();
 }
-}, 3300);
+}, 5300);
 }
 async function call(params) {
 const url = new URL(API);
@@ -152,10 +160,10 @@ el.innerHTML = `
 </div>`;
 }
 const PHASE_META = {
-menstrual: { label: 'Менструальная', color: '#C4918A', soft: '#F7EFEE' },
-follicular: { label: 'Фолликулярная', color: '#7A9B8A', soft: '#EEF4F0' },
-ovulation: { label: 'Овуляция', color: '#B8A882', soft: '#F7F4EE' },
-luteal: { label: 'Лютеиновая', color: '#7A92A8', soft: '#EEF2F7' }
+menstrual: { label: 'Менструальная', color: '#B66F7D', soft: '#F1E0E4' },
+follicular: { label: 'Фолликулярная', color: '#587A52', soft: '#E1E9DB' },
+ovulation: { label: 'Овуляция', color: '#9A7B50', soft: '#EFE4D1' },
+luteal: { label: 'Лютеиновая', color: '#5D778A', soft: '#E0E8EC' }
 };
 const PHASE_TIP = {
 menstrual: 'Щадящий ритм. Тело работает.',
