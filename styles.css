@@ -1,27 +1,35 @@
 :root {
---cream: #FAF9F6;
---cream2: #F3F1EC;
---cream3: #EAE7E0;
---white: #FFFFFF;
---border: #E8E5DE;
---border2: #D8D4CB;
---ink: #1C1A17;
---ink2: #6B6760;
---ink3: #A8A49D;
---sage: #4F7A5C;
---sage-soft: #DCEAE0;
---blush: #B36F76;
---blush-soft: #F3E1E0;
---slate: #5C7B95;
---slate-soft: #E2EBF2;
---lavender: #7C63A0;
---lavender-soft: #E9E1F2;
---sand: #A38A54;
---sand-soft: #F0E9D6;
+--cream: #F6F2E8;
+--cream2: #EAE6D9;
+--cream3: #DCD8C9;
+--white: #FFFDF8;
+--border: #D8D3C4;
+--border2: #C5BEAC;
+--ink: #243126;
+--ink2: #5F6B5C;
+--ink3: #8F9987;
+
+/* Лесная палитра — насыщеннее, но всё ещё мягкая */
+--sage: #587A52;
+--sage-soft: #E1E9DB;
+--blush: #B66F7D;
+--blush-soft: #F1E0E4;
+--slate: #5D778A;
+--slate-soft: #E0E8EC;
+--lavender: #7D6A93;
+--lavender-soft: #E9E3EE;
+--sand: #9A7B50;
+--sand-soft: #EFE4D1;
+
+--moss-deep: #3F5B3D;
+--moss: #6F875A;
+--wood: #9B795C;
+--berry: #B66F7D;
 --radius: 16px;
 --radius-sm: 10px;
 --tab-h: 56px;
 --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+--font-display: 'Fraunces', Georgia, serif;
 }
 *, *::before, *::after {
 box-sizing: border-box; margin: 0; padding: 0;
@@ -98,7 +106,7 @@ scroll-behavior: smooth;
 position: fixed; bottom: 0; left: 0; right: 0;
 height: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
 padding-bottom: env(safe-area-inset-bottom, 0px);
-background: rgba(250,249,246,0.92);
+background: rgba(246,242,232,0.92);
 backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
 border-top: 1px solid var(--border);
 display: flex; align-items: stretch; z-index: 50;
@@ -118,7 +126,7 @@ transition: color 0.15s; padding: 0;
 .page-top {
 padding: 56px 24px 20px;
 position: sticky; top: 0;
-background: rgba(250,249,246,0.88);
+background: rgba(246,242,232,0.88);
 backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 z-index: 10;
 }
@@ -349,7 +357,7 @@ white-space: pre-line;
 padding: 10px 16px;
 display: flex; align-items: flex-end; gap: 8px;
 border-top: 1px solid var(--border);
-background: rgba(250,249,246,0.95);
+background: rgba(246,242,232,0.95);
 }
 .chat-field {
 flex: 1; padding: 10px 14px;
@@ -483,12 +491,12 @@ width: 100%; height: 100%; object-fit: cover; z-index: 1;
 .fog-veil {
 position: absolute; inset: 0; z-index: 2;
 background:
-radial-gradient(ellipse 60% 40% at 20% 15%, rgba(250,248,240,0.95), transparent 70%),
-radial-gradient(ellipse 70% 45% at 80% 10%, rgba(250,248,240,0.92), transparent 70%),
-radial-gradient(ellipse 55% 50% at 50% 30%, rgba(250,248,240,0.85), transparent 65%),
-radial-gradient(ellipse 80% 35% at 30% 85%, rgba(250,248,240,0.9), transparent 70%),
-radial-gradient(ellipse 65% 40% at 85% 80%, rgba(250,248,240,0.88), transparent 70%),
-rgba(250,248,240,0.35);
+radial-gradient(ellipse 60% 40% at 20% 15%, rgba(246,242,232,0.95), transparent 70%),
+radial-gradient(ellipse 70% 45% at 80% 10%, rgba(246,242,232,0.92), transparent 70%),
+radial-gradient(ellipse 55% 50% at 50% 30%, rgba(246,242,232,0.85), transparent 65%),
+radial-gradient(ellipse 80% 35% at 30% 85%, rgba(246,242,232,0.9), transparent 70%),
+radial-gradient(ellipse 65% 40% at 85% 80%, rgba(246,242,232,0.88), transparent 70%),
+rgba(246,242,232,0.35);
 mask-image: radial-gradient(circle at 50% 45%, transparent 0%, transparent var(--r,0%), black calc(var(--r,0%) + 22%), black 100%);
 -webkit-mask-image: radial-gradient(circle at 50% 45%, transparent 0%, transparent var(--r,0%), black calc(var(--r,0%) + 22%), black 100%);
 opacity: var(--fog-opacity, 1);
@@ -496,7 +504,7 @@ opacity: var(--fog-opacity, 1);
 .moss-boot-label {
 position: absolute; left: 0; right: 0; bottom: 15%;
 text-align: center; z-index: 5;
-font-family: 'Fraunces', serif;
+font-family: var(--font-display);
 font-style: italic;
 font-size: 22px; color: var(--cream);
 opacity: 0;
@@ -517,7 +525,7 @@ font-size: 24px;
 .bload-chip.b2 { top: 73px; background: var(--lavender-soft); animation: bl2 3.6s ease-out infinite .12s; }
 .bload-chip.b3 { top: 143px; background: var(--sage-soft); animation: bl3 3.6s ease-out infinite .24s; }
 .leaf-loader { width: 100%; height: 150px; position: relative; overflow: hidden; }
-.fly-leaf { position:absolute; top:50%; left:0; width:42px; height:42px; margin-top:-21px; opacity:0; }
+.fly-leaf { position:absolute; top:50%; left:0; width:38px; height:38px; margin-top:-21px; opacity:0; }
 .fly-leaf svg { width:100%; height:100%; }
 .fly-leaf .leaf-vein { stroke: rgba(0,0,0,0.25); stroke-width: 0.9; fill:none; }
 .fly-leaf.f1 { animation: flutterA 3.2s linear infinite; }
@@ -543,4 +551,11 @@ font-size: 24px;
 50% { translate: 50vw 45px; rotate: -200deg; scale: 0.5; }
 90% { opacity:1; }
 100% { opacity:0; translate: 110vw -25px; rotate: -390deg; scale: 0.9; }
+}
+
+
+/* ─── MOTION SAFETY ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .fly-leaf { opacity: .75; transform: none !important; }
 }
