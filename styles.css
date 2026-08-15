@@ -1,30 +1,30 @@
 :root {
---cream: #EDE6D2;
---cream2: #DFE0C9;
---cream3: #CBCFB2;
---white: #F7F2E2;
---border: #C9CBB0;
---border2: #ADAF94;
---ink: #25352A;
---ink2: #5E6B5D;
---ink3: #87927F;
+--cream: #F1E8D6;
+--cream2: #E6DCC3;
+--cream3: #D8CBAA;
+--white: #F8F2E4;
+--border: #D9CDAF;
+--border2: #C2B394;
+--ink: #3A342A;
+--ink2: #6E6552;
+--ink3: #9C8F76;
 
-/* Лесная палитра — насыщеннее, но всё ещё мягкая */
---sage: #557B4D;
---sage-soft: #DDE8D6;
---blush: #B85F78;
---blush-soft: #F3DFE5;
---slate: #55758A;
---slate-soft: #DFE9ED;
---lavender: #75658E;
---lavender-soft: #E8E1ED;
---sand: #A27B4F;
---sand-soft: #F0E1CC;
+/* Лесная палитра — пастельная, тёплая, в тон акварельному экрану загрузки */
+--sage: #8FA377;
+--sage-soft: #E5EAD9;
+--blush: #C98B93;
+--blush-soft: #F5E5E4;
+--slate: #7C93A0;
+--slate-soft: #E7EDEF;
+--lavender: #9686AC;
+--lavender-soft: #EEE7F1;
+--sand: #B69868;
+--sand-soft: #F2E7D2;
 
---moss-deep: #3D5E3B;
---moss: #6D8A57;
---wood: #A37C5D;
---berry: #B85F78;
+--moss-deep: #5C6E4A;
+--moss: #9CAE82;
+--wood: #B69868;
+--berry: #B5677A;
 --radius: 16px;
 --radius-sm: 10px;
 --tab-h: 56px;
@@ -113,7 +113,7 @@ scroll-behavior: smooth;
 position: fixed; bottom: 0; left: 0; right: 0;
 height: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
 padding-bottom: env(safe-area-inset-bottom, 0px);
-background: rgba(237,230,210,0.90);
+background: rgba(241,232,214,0.90);
 backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
 border-top: 1px solid var(--border);
 display: flex; align-items: stretch; z-index: 50;
@@ -133,7 +133,7 @@ transition: color 0.15s; padding: 0;
 .page-top {
 padding: 56px 24px 20px;
 position: sticky; top: 0;
-background: rgba(237,230,210,0.86);
+background: rgba(241,232,214,0.86);
 backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 z-index: 10;
 }
@@ -367,7 +367,7 @@ white-space: pre-line;
 padding: 10px 16px;
 display: flex; align-items: flex-end; gap: 8px;
 border-top: 1px solid var(--border);
-background: rgba(237,230,210,0.94);
+background: rgba(241,232,214,0.94);
 }
 .chat-field {
 flex: 1; padding: 10px 14px;
@@ -502,12 +502,12 @@ width: 100%; height: 100%; object-fit: cover; z-index: 1;
 .fog-veil {
 position: absolute; inset: 0; z-index: 2;
 background:
-radial-gradient(ellipse 60% 40% at 20% 15%, rgba(247,242,226,0.95), transparent 70%),
-radial-gradient(ellipse 70% 45% at 80% 10%, rgba(247,242,226,0.92), transparent 70%),
-radial-gradient(ellipse 55% 50% at 50% 30%, rgba(247,242,226,0.85), transparent 65%),
-radial-gradient(ellipse 80% 35% at 30% 85%, rgba(247,242,226,0.9), transparent 70%),
-radial-gradient(ellipse 65% 40% at 85% 80%, rgba(247,242,226,0.88), transparent 70%),
-rgba(247,242,226,0.35);
+radial-gradient(ellipse 60% 40% at 20% 15%, rgba(248,242,228,0.95), transparent 70%),
+radial-gradient(ellipse 70% 45% at 80% 10%, rgba(248,242,228,0.92), transparent 70%),
+radial-gradient(ellipse 55% 50% at 50% 30%, rgba(248,242,228,0.85), transparent 65%),
+radial-gradient(ellipse 80% 35% at 30% 85%, rgba(248,242,228,0.9), transparent 70%),
+radial-gradient(ellipse 65% 40% at 85% 80%, rgba(248,242,228,0.88), transparent 70%),
+rgba(248,242,228,0.35);
 mask-image: radial-gradient(circle at 50% 45%, transparent 0%, transparent var(--r,0%), black calc(var(--r,0%) + 22%), black 100%);
 -webkit-mask-image: radial-gradient(circle at 50% 45%, transparent 0%, transparent var(--r,0%), black calc(var(--r,0%) + 22%), black 100%);
 opacity: var(--fog-opacity, 1);
