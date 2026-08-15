@@ -9,22 +9,22 @@
 --ink2: #6E6552;
 --ink3: #9C8F76;
 
-/* Лесная палитра — пастельная, тёплая, в тон акварельному экрану загрузки */
---sage: #8FA377;
---sage-soft: #E5EAD9;
---blush: #C98B93;
---blush-soft: #F5E5E4;
---slate: #7C93A0;
---slate-soft: #E7EDEF;
---lavender: #9686AC;
---lavender-soft: #EEE7F1;
---sand: #B69868;
---sand-soft: #F2E7D2;
+/* Лесная палитра — пастельная, приглушённая, в тон акварельному экрану загрузки */
+--sage: #A3AD8C;
+--sage-soft: #EAE8DC;
+--blush: #D3A6A8;
+--blush-soft: #F6ECE9;
+--slate: #9AACB2;
+--slate-soft: #EAEFEF;
+--lavender: #AFA1BC;
+--lavender-soft: #F1ECF3;
+--sand: #C2A97D;
+--sand-soft: #F5EDDC;
 
---moss-deep: #5C6E4A;
---moss: #9CAE82;
---wood: #B69868;
---berry: #B5677A;
+--moss-deep: #6B7856;
+--moss: #AEBB93;
+--wood: #C2A97D;
+--berry: #C17D82;
 --radius: 16px;
 --radius-sm: 10px;
 --tab-h: 56px;
@@ -143,7 +143,9 @@ letter-spacing: 0.12em; text-transform: uppercase;
 color: var(--ink3); margin-bottom: 4px;
 }
 .page-title {
-font-size: 28px; font-weight: 300;
+font-family: var(--font-display);
+font-style: italic;
+font-size: 28px; font-weight: 400;
 letter-spacing: -0.3px; color: var(--ink);
 }
 .flow { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
@@ -152,6 +154,7 @@ background: var(--white);
 border: 1px solid var(--border);
 border-radius: var(--radius);
 overflow: hidden;
+box-shadow: 0 10px 28px -8px rgba(90,80,50,0.14);
 }
 .card-top {
 padding: 16px 18px 12px;
@@ -567,16 +570,16 @@ font-size: 24px;
 .fly-leaf.f5 .leaf-body { fill: var(--slate); }
 @keyframes flutterA {
   0% { opacity:0; transform: translate3d(-10vw, 20px, 0) rotate(-10deg) scale(.9); }
-  10% { opacity:1; }
+  10% { opacity:.7; }
   50% { transform: translate3d(50vw, -40px, 0) rotate(190deg) scale(.5); }
-  90% { opacity:1; }
+  90% { opacity:.7; }
   100% { opacity:0; transform: translate3d(115vw, 30px, 0) rotate(380deg) scale(.9); }
 }
 @keyframes flutterB {
   0% { opacity:0; transform: translate3d(-10vw, -20px, 0) rotate(8deg) scale(.9); }
-  10% { opacity:1; }
+  10% { opacity:.7; }
   50% { transform: translate3d(50vw, 45px, 0) rotate(-200deg) scale(.5); }
-  90% { opacity:1; }
+  90% { opacity:.7; }
   100% { opacity:0; transform: translate3d(115vw, -25px, 0) rotate(-390deg) scale(.9); }
 }
 @media (max-width: 600px) {
