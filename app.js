@@ -41,15 +41,13 @@ document.getElementById('auth-err').style.display = '';
 }
 function playMossBoot() {
   const fog = document.getElementById('fog-veil');
-  const label = document.getElementById('moss-boot-label');
 
-  if (!fog || !label) {
-    console.error('НЕТ #fog-veil или #moss-boot-label');
+  if (!fog) {
+    console.error('НЕТ #fog-veil');
     return;
   }
 
   // Начинаем с полностью туманного экрана.
-  label.classList.remove('on');
   fog.style.setProperty('--r', '0%');
   fog.style.setProperty('--fog-opacity', '1');
 
@@ -71,8 +69,6 @@ function playMossBoot() {
 
     if (t < 1) {
       requestAnimationFrame(frame);
-    } else {
-      setTimeout(() => label.classList.add('on'), 200);
     }
   }
 
@@ -311,23 +307,27 @@ async function loadHealth() {
     // Каждый блок здоровья загружается независимо.
     // Если, например, график индекса временно не отвечает, обычные
     // показатели веса/жира/мышц всё равно должны появиться.
-    const [healthRes, suppsRes, scoreRes] = await Promise.allSettled([
+    const [healthRes, suppsRes, scoreRes, measureRes] = await Promise.allSettled([
       call({ action: 'health' }),
       call({ action: 'supps' }),
-      call({ action: 'body_score_history' })
+      call({ action: 'body_score_history' }),
+      call({ action: 'body_measurements' })
     ]);
 
     const hd = healthRes.status === 'fulfilled' ? healthRes.value : { error: healthRes.reason?.message };
     const sd = suppsRes.status === 'fulfilled' ? suppsRes.value : { error: suppsRes.reason?.message };
     const bs = scoreRes.status === 'fulfilled' ? scoreRes.value : { history: [], error: scoreRes.reason?.message };
+    const md = measureRes.status === 'fulfilled' ? measureRes.value : { measurements: [], error: measureRes.reason?.message };
 
     if (hd.error) console.warn('Health API:', hd.error);
     if (sd.error) console.warn('Supps API:', sd.error);
     if (bs.error) console.warn('Body score API:', bs.error);
+    if (md.error) console.warn('Measurements API:', md.error);
 
     renderMetrics(hd);
     renderMood(hd);
     renderSupps(sd);
+    renderMeasurements(md);
 
     const chart = renderBodyScoreChart(bs.history || []);
     if (chart) {
